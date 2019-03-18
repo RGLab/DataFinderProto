@@ -7,24 +7,32 @@
 
 # Define UI 
 fluidPage(
-  # title
+  # title ------------------------------
   titlePanel("Data Finder"),
   
+  # Main -------------------------------
   sidebarLayout(
+    
+    # LHS (filters) --------------------
     sidebarPanel(
       
-      # Selector panel
+      # Tabbed Filter selectors --------
       tabsetPanel(
+        
+        # Study ------------------------
         tabPanel("Study",
                  #inputs
-                 
                  checkboxGroupInput("species", "species", choices = c("a", "b", "c")
                  )
         ),
+        
+        # Subject ----------------------
         tabPanel("Subject",
                  checkboxGroupInput("gender", "gender", choices = c("a", "b", "c"))
                  # inputs
         ),
+        
+        # Sample -----------------------
         tabPanel("Sample",
                  # inputs
                  checkboxGroupInput("assay", "assay", choices = c("a", "b", "c"))
@@ -32,7 +40,7 @@ fluidPage(
       )
     ),
     
-    # visualization panel
+    # RHS (visualizations) -------------
     mainPanel(
       textOutput("textOutput")
     )

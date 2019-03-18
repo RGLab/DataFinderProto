@@ -15,17 +15,14 @@ for (file in helperFiles) {
   source(file.path("helpers", file))
 } 
 
-# Create Connection
-ISCon <- CreateConnection("")
 
 # Get the data
-data <- getData(ISCon)
-
+data <- getData()
 
 
 function(input, output, session) {
   # Reactive filtered dataframe
-  # Use dataFilter helper function
+  # Use filterData helper function
   
   # Plots for visualization panel
   # Use helper plotting functions
