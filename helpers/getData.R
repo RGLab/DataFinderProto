@@ -21,8 +21,7 @@ getData <- function(baseUrl = "https://www.immunespace.org",
                                             schemaName = "immport", 
                                             queryName = "dimsample",
                                             colNameOpt = "fieldname"))
-  dimSample[, sample_type := type]
-  dimSample[, type := NULL]
+  setnames(dimSample, "type", "sample_type")
   
   # sampleassay
   dimSampleassay <- data.table(labkey.selectRows(baseUrl,
@@ -37,15 +36,13 @@ getData <- function(baseUrl = "https://www.immunespace.org",
                                            schemaName = "immport", 
                                            queryName = "dimstudy",
                                            colNameOpt = "fieldname"))
-  dimStudy[, c("study_type", "study_sortorder") := list(type, sortorder)]
-  dimStudy[, c("type", "sortorder") := c(NULL, NULL)]
-  
+  setnames(dimStudy, c("type", "sortorder"), c("study_type", "study_sortorder"))
   
   # studycondition -- come back to this later...
-  # TODO: Some studies show up multiple times in this 
-  # table. Figure out why and how to deal with that
-  dimStudycondition <- data.table(labkey.selectRows(baseUrl = "https://test.immunespace.org",
-                                         folderPath = "/Studies",
+  # TODO: There are some studies (eg SDY201, SDY614) which have multiple conditions,
+  # and therefore have multiple rows in this table. Determine the best method for dealing with that 
+  dimStudycondition <- data.table(labkey.selectRows(baseUrl ,
+                                         folderPath,
                                          schemaName = "immport", 
                                          queryName = "dimstudycondition",
                                          colNameOpt = "fieldname"))
@@ -54,7 +51,12 @@ getData <- function(baseUrl = "https://www.immunespace.org",
   cube <- merge(dimDemographic, dimSample, by = "subjectid", all = TRUE)
   cube <- merge(cube, dimSampleassay, by = "sampleid", all = TRUE)
   cube <- merge(cube, dimStudy, by = "study", all = TRUE)
-  # cube <- merge(cube, dimStudycondition, by = "study", all = TRUE)
+  # allow.cartesian = TRUE means that for studies with multiple rows in
+  # dimStudycondition (ie multiple conditions for one study) each row will be
+  # duplicated so that eg for a study with two conditions there will be two rows
+  # where everything is the same except study condition
+  cube <- merge(cube, dimStudycondition, by = "study", all = TRUE, allow.cartesian = TRUE)
+  
   
   # > names(cube)
   # [1] "study"               "sampleid"            "subjectid"           "ageinyears"          "species"            

@@ -22,27 +22,35 @@ fluidPage(
         # Study ------------------------
         tabPanel("Study",
                  #inputs
-                 checkboxGroupInput("species", "species", choices = c("a", "b", "c")
-                 )
+                 checkboxGroupInput("species", "species", choices = c("Homo sapiens", "Mus musculus"),
+                                    selected = c("Homo sapiens", "Mus musculus"))
         ),
         
         # Subject ----------------------
         tabPanel("Subject",
-                 checkboxGroupInput("gender", "gender", choices = c("a", "b", "c"))
+                 checkboxGroupInput("gender", "gender", choices = c("Male", "Female"), 
+                                    selected = c("Male", "Female"))
                  # inputs
         ),
         
         # Sample -----------------------
         tabPanel("Sample",
                  # inputs
-                 checkboxGroupInput("assay", "assay", choices = c("a", "b", "c"))
+                 checkboxGroupInput("assay", "assay", choices = c("ELISA", "Flow Cytometry", "CyTOF", "HAI", "Gene Expression"),
+                                    selected = c("ELISA", "Flow Cytometry", "CyTOF", "HAI", "Gene Expression"))
         )
       )
     ),
     
     # RHS (visualizations) -------------
     mainPanel(
-      textOutput("textOutput")
+      textOutput("dim"),
+      textOutput("participants"),
+      textOutput("Studies"),
+      textOutput("Samples"),
+      textOutput("species"),
+      textOutput("gender"),
+      textOutput("assay")
     )
     
   )

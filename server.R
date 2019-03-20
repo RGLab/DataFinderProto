@@ -17,19 +17,73 @@ for (file in helperFiles) {
 
 
 # Get the data
+cat("get the data")
 data <- getData()
-
+cat("got the data")
 
 function(input, output, session) {
+  # Reactives ---------------------------
+    # Filtered dataframe
+  # NOTE:  If nothing is checked for checkboxGroupInput, 
+  # the input value is NULL. Otherwise, it is a character vector. 
+  reactiveData <- reactive({
+    filterData(
+      data,
+      list(
+        species = input$species,
+        gender = input$gender,
+        assay = input$assay
+      )
+    )
+  })
   # Reactive filtered dataframe
   # Use filterData helper function
   
+  
   # Plots for visualization panel
   # Use helper plotting functions
-  output$textOutput <- renderText(
-    paste0("species=", paste(input$species, collapse = ","), ";\n", 
-           "gender=", paste(input$gender, collapse = ","), ";\n",
-           "assay=", paste(input$assay, collapse = ","))
-  )
+  output$dim <- renderText({
+    paste(
+      "dim(data) = ", paste0(dim(reactiveData()), collapse = ","))
+    })
+  
+  output$species <- renderText({
+    paste(
+      "unique(data$species) = ", paste0(unique(reactiveData()$species), collapse = ",")
+    )
+  }) 
+  
+  output$gender <- renderText({
+    paste(
+      "unique(data$gender) = ", paste0(unique(reactiveData()$gender), collapse = ",")
+    )
+  })
+  
+  output$assay <- renderText({
+    paste(
+      "unique(data$assay) = ", paste0(unique(reactiveData()$assay), collapse = ",")
+    )
+  })
+    
+  output$participants <- renderText({
+    paste(
+      length(unique(reactiveData()$subjectid)),
+      " subjects"
+    )
+  })
+  
+  output$Studies <- renderText({
+    paste(
+      length(unique(reactiveData()$study)),
+      " studies"
+    )
+  })
+  
+  output$Samples <- renderText({
+    paste(
+      length(unique(reactiveData()$sampleid)),
+      " samples"
+    )
+  })
 }
 
