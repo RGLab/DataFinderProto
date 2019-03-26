@@ -49,7 +49,7 @@ function(input, output, session) {
   # Study cards ----
   output$studyCards <- renderUI({
     studies <- unique(reactiveData()$study)
-    tagList <- lapply(studies, createStudyCard, reactiveData())
+    tagList <- lapply(studies, createStudyCard, reactiveData(), output)
     tagList(tagList)
   })
   
