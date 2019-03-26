@@ -44,13 +44,28 @@ fluidPage(
     
     # RHS (visualizations) -------------
     mainPanel(
-      textOutput("dim"),
-      textOutput("participants"),
-      textOutput("Studies"),
-      textOutput("Samples"),
-      textOutput("species"),
-      textOutput("gender"),
-      textOutput("assay")
+      tabsetPanel(
+        tabPanel("Studies",
+                 uiOutput("studyCards")
+                 ),
+        tabPanel("Plots",
+                 textOutput("dim"),
+                 textOutput("participants"),
+                 textOutput("Studies"),
+                 textOutput("Samples"),
+                 textOutput("species"),
+                 textOutput("gender"),
+                 textOutput("assay"),
+                 plotOutput("timepointHeatmap_study"),
+                 plotOutput("timepointHeatmap_sample"),
+                 plotOutput("upsetPlot"),
+                 plotOutput("studyTypePlot"),
+                 plotOutput("genderBarplot"),
+                 plotOutput("assayBarplot")
+                 )
+      )
+      
+      
     )
     
   )

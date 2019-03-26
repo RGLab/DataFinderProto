@@ -57,6 +57,19 @@ getData <- function(baseUrl = "https://www.immunespace.org",
   # where everything is the same except study condition
   cube <- merge(cube, dimStudycondition, by = "study", all = TRUE, allow.cartesian = TRUE)
   
+  # Filter to only include studies on ImmuneSpace...
+  studies <- labkey.selectRows(
+    baseUrl=baseUrl,
+    folderPath="/home",
+    schemaName="lists",
+    queryName="Studies",
+    viewName="",
+    colSort="id",
+    colFilter=NULL,
+    containerFilter=NULL
+  )
+  
+  cube <- cube[study %in% studies$Name]
   
   # > names(cube)
   # [1] "study"               "sampleid"            "subjectid"           "ageinyears"          "species"            

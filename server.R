@@ -7,7 +7,9 @@
 library(shiny)
 library(ImmuneSpaceR)
 library(Rlabkey)
+library(ggplot2)
 library(data.table)
+library(UpSetR)
 
 # Source helper files
 helperFiles <- list.files("helpers")
@@ -17,11 +19,16 @@ for (file in helperFiles) {
 
 
 # Get the data
-cat("get the data")
-data <- getData()
-cat("got the data")
+# For testing use local data
+data <- get(load("data/cube.RData"))
+# data <- getData()
+
 
 function(input, output, session) {
+  
+
+  
+  
   # Reactives ---------------------------
     # Filtered dataframe
   # NOTE:  If nothing is checked for checkboxGroupInput, 
@@ -39,8 +46,15 @@ function(input, output, session) {
   # Reactive filtered dataframe
   # Use filterData helper function
   
+  # Study cards ----
+  output$studyCards <- renderUI({
+    studies <- unique(reactiveData()$study)
+    tagList <- lapply(studies, createStudyCard, reactiveData())
+    tagList(tagList)
+  })
   
-  # Plots for visualization panel
+  
+  # Plots for visualization panel ----------
   # Use helper plotting functions
   output$dim <- renderText({
     paste(
@@ -84,6 +98,30 @@ function(input, output, session) {
       length(unique(reactiveData()$sampleid)),
       " samples"
     )
+  })
+  
+  output$timepointHeatmap_sample <- renderPlot({
+    timepointHeatmap_sample(reactiveData())
+  })
+  
+  output$timepointHeatmap_study <- renderPlot({
+    timepointHeatmap_study(reactiveData())
+  })
+  
+  output$upsetPlot <- renderPlot({
+    upsetPlot(reactiveData())
+  })
+  
+  output$studyTypePlot <- renderPlot({
+    studyTypePlot(reactiveData())
+  })
+  
+  output$genderBarplot <- renderPlot({
+    genderBarplot(reactiveData())
+  })
+  
+  output$assayBarplot <- renderPlot({
+    assayBarplot(reactiveData())
   })
 }
 
