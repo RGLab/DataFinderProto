@@ -7,10 +7,16 @@ createStudyCard <- function(studyName, data, output) {
   sampleType <- paste0(unique(studyData$sample_type), collapse = ", ")
   assays <- paste0(unique(studyData$assay), collapse = ", ")
   # browser()
-  output[[paste0("plot_", studyName)]] <- renderCachedPlot({
-    timepointHeatmap_sample_small(studyData,
-                                  breaks = c(0, 5, 10, 50, Inf))},
-    cacheKeyExpr = list(studyName, "timepointHeatmap_sample_small"))
+  if (sum(!is.na(studyData$assay)) > 0) {
+    output[[paste0("plot_", studyName)]] <- renderCachedPlot({
+      timepointHeatmap_sample_small(studyData,
+                                    breaks = c(0, 5, 10, 50, Inf))},
+      cacheKeyExpr = list(studyName, "timepointHeatmap_sample_small"))
+    outputPlot <- plotOutput(paste0("plot_", studyName), height = "200px")
+  } else {
+    outputPlot <- NULL
+  }
+  
   
   div(
     style = paste0(
@@ -21,12 +27,12 @@ createStudyCard <- function(studyName, data, output) {
       "width: 300px;",
       "display:inline-block;"
     ),
-    span(h3(studyName)), em(participantCount, " participants"),
+    h3(studyName), p(em(participantCount, " participants")),
     p(paste0("Exposure material: ", exposureMaterial)),
     p(paste0("Condition: ", condition)),
     p(paste0("Sample Type: ", sampleType)),
     p(paste0("Assays: ", assays)),
-    plotOutput(paste0("plot_", studyName), height = "200px"),
+    p(outputPlot),
     div()
   )
 }

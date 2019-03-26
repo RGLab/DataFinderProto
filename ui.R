@@ -22,22 +22,19 @@ fluidPage(
         # Study ------------------------
         tabPanel("Study",
                  #inputs
-                 checkboxGroupInput("species", "species", choices = c("Homo sapiens", "Mus musculus"),
-                                    selected = c("Homo sapiens", "Mus musculus"))
+                 uiOutput("studyFilters")
         ),
         
         # Subject ----------------------
         tabPanel("Subject",
-                 checkboxGroupInput("gender", "gender", choices = c("Male", "Female"), 
-                                    selected = c("Male", "Female"))
                  # inputs
+                 uiOutput("subjectFilters")
         ),
         
         # Sample -----------------------
         tabPanel("Sample",
                  # inputs
-                 checkboxGroupInput("assay", "assay", choices = c("ELISA", "Flow Cytometry", "CyTOF", "HAI", "Gene Expression"),
-                                    selected = c("ELISA", "Flow Cytometry", "CyTOF", "HAI", "Gene Expression"))
+                 uiOutput("sampleFilters")
         )
       )
     ),

@@ -26,7 +26,52 @@ data <- get(load("data/cube.RData"))
 
 function(input, output, session) {
   
-
+  # filter inputs for UI -----
+  output$studyFilters <- renderUI({
+    tagList(
+      checkboxGroupInput(inputId = "species", 
+                         label = "Species", 
+                         choices = unique(data$species)),
+      checkboxGroupInput(inputId = "condition", 
+                         label = "Disease",
+                         choices = unique(data$condition)),
+      checkboxGroupInput(inputId = "exposure_material",
+                         label = "Vaccine",
+                         choices = unique(data$exposure_material)),
+      checkboxGroupInput(inputId = "study_type",
+                         label = "Study Type",
+                         choices = unique(data$study_type)),
+      div()
+    )
+  })
+  output$subjectFilters <- renderUI({
+    tagList(
+      checkboxGroupInput(inputId = "gender",
+                         label = "Gender",
+                         choices = unique(data$gender)),
+      checkboxGroupInput(inputId = "race",
+                         label = "Race",
+                         choices = unique(data$race)),
+      checkboxGroupInput(inputId = "age",
+                         label = "Age",
+                         choices = unique(data$age)),
+      div()
+    )
+  })
+  output$sampleFilters <- renderUI({
+    tagList(
+      checkboxGroupInput(inputId = "assay",
+                         label = "Assay",
+                         choices = unique(data$assay)),
+      checkboxGroupInput(inputId = "sample_type",
+                         label = "Cell Type",
+                         choices = unique(data$sample_type)),
+      checkboxGroupInput("timepoint",
+                         label = "Day of Study",
+                         choices = unique(data$timepoint)),
+      div()
+    )
+  })
   
   
   # Reactives ---------------------------
@@ -38,13 +83,21 @@ function(input, output, session) {
       data,
       list(
         species = input$species,
+        condition = input$condition,
+        exposure_material = input$exposure_material,
+        study_type = input$study_type,
         gender = input$gender,
-        assay = input$assay
+        race = input$race,
+        age = input$age,
+        assay = input$assay,
+        sample_type = input$sample_type,
+        timepoint = input$timepoint
       )
     )
   })
   # Reactive filtered dataframe
   # Use filterData helper function
+  
   
   # Study cards ----
   output$studyCards <- renderUI({
