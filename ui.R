@@ -13,7 +13,7 @@ fluidPage(
   ),
   
   # title ------------------------------
-  titlePanel("Data Finder (0.1.0)"),
+  titlePanel("Data Finder (0.1.1)"),
   
   # Main -------------------------------
   sidebarLayout(
@@ -31,7 +31,7 @@ fluidPage(
         ),
         
         # Subject ----------------------
-        tabPanel("Subject",
+        tabPanel("Participant",
                  # inputs
                  uiOutput("subjectFilters")
         ),
