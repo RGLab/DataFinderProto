@@ -109,6 +109,18 @@ function(input, output, session) {
   
   # Plots for visualization panel ----------
   # Use helper plotting functions
+  output$summaryText <- renderText({
+    paste0(
+      "Showing data from ",
+      length(unique(reactiveData()$sampleid)),
+      " samples from ",
+      length(unique(reactiveData()$subjectid)),
+      " subjects in ",
+      length(unique(reactiveData()$study)),
+      " studies."
+    )
+  })
+  
   output$dim <- renderText({
     paste(
       "dim(data) = ", paste0(dim(reactiveData()), collapse = ","))
@@ -173,8 +185,15 @@ function(input, output, session) {
     genderBarplot(reactiveData())
   })
   
+  output$ageBarplot <- renderPlot({
+    ageBarplot(reactiveData())
+  })
+  
+  output$raceBarplot <- renderPlot({
+    raceBarplot(reactiveData())
+  })
+  
   output$assayBarplot <- renderPlot({
     assayBarplot(reactiveData())
   })
 }
-

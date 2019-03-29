@@ -7,6 +7,11 @@
 
 # Define UI 
 fluidPage(
+  
+  tags$head(
+    tags$link(rel = "stylesheet", type = "text/css", href = "styles.css")
+  ),
+  
   # title ------------------------------
   titlePanel("Data Finder"),
   
@@ -46,19 +51,14 @@ fluidPage(
                  uiOutput("studyCards")
                  ),
         tabPanel("Plots",
-                 textOutput("dim"),
-                 textOutput("participants"),
-                 textOutput("Studies"),
-                 textOutput("Samples"),
-                 textOutput("species"),
-                 textOutput("gender"),
-                 textOutput("assay"),
-                 plotOutput("timepointHeatmap_study"),
-                 plotOutput("timepointHeatmap_sample"),
-                 plotOutput("upsetPlot"),
-                 plotOutput("studyTypePlot"),
-                 plotOutput("genderBarplot"),
-                 plotOutput("assayBarplot")
+                 textOutput("summaryText"),
+                 div(plotOutput("genderBarplot", height = "100%"), class = "barplot"),
+                 div(plotOutput("ageBarplot", height = "100%"), class = "barplot"),
+                 div(plotOutput("raceBarplot", height = "100%"), class = "barplot"),
+                 div(plotOutput("timepointHeatmap_study",  height = "200px")),
+                 div(plotOutput("timepointHeatmap_sample", height = "200px")),
+                 div(plotOutput("upsetPlot", height = "300px")),
+                 div()
                  )
       )
       

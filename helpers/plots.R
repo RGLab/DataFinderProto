@@ -10,6 +10,16 @@ studyTypePlot <- function(data) {
     theme_IS()
 }
 
+custom_barplot_theme <- list(
+  theme_minimal(base_size = 12) +
+    theme(axis.title = element_blank(),
+          panel.grid.major.x = element_blank(),
+          plot.title = element_text(hjust = 0.5),
+          axis.text.x = element_text(vjust = 1, hjust = 1, angle = 45),
+          axis.ticks.x = element_line()),
+    scale_y_continuous(expand = expand_scale(mult= c(0, .05)))
+)
+
 genderBarplot <- function(data) {
   # Transform data so one row per participant
   td <- data[, .(gender = unique(gender)), by = "subjectid"]
@@ -17,10 +27,43 @@ genderBarplot <- function(data) {
   # plot data
   ggplot(td, aes(gender)) +
     geom_bar() + 
-    xlab("Gender") +
-    ylab("Number of participants") +
-    theme_IS()
+    ggtitle("Gender") +
+    custom_barplot_theme
+}
+
+ageBarplot <- function(data) {
+  # Transform data so one row per participant
+  td <- data[, .(age = unique(age)), by = "subjectid"]
+  age_order <- c("0-10", "11-20", "21-30", "31-40", "41-50", "51-60", "61-70", "> 70", "Unknown")
   
+  # plot data
+  ggplot(td, aes(age)) +
+    geom_bar() + 
+    ggtitle("Age") +
+    scale_x_discrete(limits = age_order) +
+    custom_barplot_theme
+}
+
+raceBarplot <- function(data) {
+  # Transform data so one row per participant
+  td <- data[, .(race = unique(race)), by = "subjectid"]
+  td$race <- ifelse(td$race %in% c("Not Specified", "Not_Specified", "Unknown"), "Unknown", td$race)
+  raceLabels <- c(
+    "American Indian or Alaska Native" = "American Indian or\nAlaska Native",
+    "Asian" = "Asian",
+    "Black or African American" = "Black or\nAfrican American",
+    "Native Hawaiian or Other Pacific Islander" = "Hawaiian or\nPacific Islander", 
+    "White" = "White",
+    "Other" = "Other",
+    "Unknown" = "Unknown")
+  td$race <- raceLabels[td$race]
+  
+  # plot data
+  ggplot(td, aes(race)) +
+    geom_bar() + 
+    ggtitle("Race") +
+    custom_barplot_theme +
+    scale_x_discrete(limits = raceLabels)
 }
 
 
@@ -61,9 +104,9 @@ timepointHeatmap_study <- function(data) {
     theme(panel.background = element_rect(fill = RColorBrewer::brewer.pal(8, "Greens")[1]),
           panel.border = element_rect(linetype = 1, fill = "transparent"),
           legend.key = element_rect(color= "gray50"),
-          panel.grid = element_blank()) +
-    xlab("Week") +
-    coord_equal() +
+          panel.grid = element_blank(),
+          axis.title = element_blank()) +
+    xlab("Study Day") +
     scale_fill_manual(values =  c(RColorBrewer::brewer.pal(8, "Greens")),
                       limits = as.character(1:8),
                       labels = c("0", "1", "2", "3", "4", "5", "6-10", "11+"),
@@ -157,9 +200,9 @@ timepointHeatmap_sample <- function(data) {
     theme(panel.background = element_rect(fill = RColorBrewer::brewer.pal(8, "Greens")[1]),
           panel.border = element_rect(linetype = 1, fill = "transparent"),
           legend.key = element_rect(color= "gray50"),
-          panel.grid = element_blank()) +
-    xlab("Week") +
-    coord_equal() +
+          panel.grid = element_blank(),
+          axis.title.y = element_blank()) +
+    xlab("Study Day") +
     scale_fill_manual(values =  c(RColorBrewer::brewer.pal(8, "Greens")),
                       limits = as.character(1:8),
                       labels = c("0", "1-5", "6-10", "11-50", "51-100", "101-500", "501-1000", ">1000"),
