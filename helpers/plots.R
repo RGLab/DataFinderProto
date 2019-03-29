@@ -89,7 +89,7 @@ assayBarplot <- function(data) {
 # timepoint heatmaps --------
 
 timepointHeatmap <- function(td,
-                             breaks = c(0, 5, 10, 50, 100, 500, 1000, Inf),
+                             breaks = c(0, 10, 50, 100, 500, 1000, Inf),
                              legendLabels = NULL,
                              legendName = "Number of\nSamples",
                              colorScheme = "Greens",
@@ -97,6 +97,13 @@ timepointHeatmap <- function(td,
   
   timepoints_xaxis <- c("<0", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12",
                         "13", "14", "15-27", "28", "29-55", "56", ">56")
+  
+  # Make sure combinations with zero studies have a row, with count = 0.
+  d <- expand.grid(assay = unique(td$assay), timepoint = timepoints_xaxis)
+  d$count <- unlist(apply(d, 1, function(row){
+      tdrow <- which(td$assay == row[1] & td$timepoint == row[2])
+      ifelse(length(tdrow) == 0, 0, td[tdrow, "N"])
+    }))
   
   # Make map for assay labels
   if (abbreviateAssayNames) {
@@ -134,7 +141,7 @@ timepointHeatmap <- function(td,
     legendLabels <- character(length(breaks))
     for (i in seq_along(legendLabels)) {
       if (i == 1) {
-        legendLabels[i] <- paste0("  ", breaks[i])
+        legendLabels[i] <- paste0("  ", "0")
       } else if (i == length(breaks)) {
         legendLabels[i] <- paste0(" >",breaks[i-1])
       } else {
@@ -146,12 +153,13 @@ timepointHeatmap <- function(td,
   }
   
   # Set color
-  td$colorIndex <- as.character(.bincode(td$N, breaks = breaks))
+  d$colorIndex <- as.character(.bincode(d$count, breaks = breaks, include.lowest = TRUE) + 1)
+  d$colorIndex <- ifelse(d$count == 0, "1", d$colorIndex)
   
   # get assay labels, filtered by present assays
   assays <- unique(td$assay)[order(unique(td$assay), decreasing = TRUE)]
   
-  ggplot(td, aes(timepoint, assay)) + 
+  ggplot(d, aes(timepoint, assay)) + 
     geom_tile(aes(fill = colorIndex)) +
     scale_x_discrete(limits = timepoints_xaxis) +
     scale_y_discrete(limits = assays, labels = assayLabels[assays]) +
@@ -160,7 +168,7 @@ timepointHeatmap <- function(td,
           legend.key = element_rect(color= "gray50"),
           panel.grid = element_blank(),
           axis.title = element_blank()) +
-    xlab("Week") +
+    xlab("Study Day") +
     scale_fill_manual(values =  c("white", RColorBrewer::brewer.pal(length(breaks)-1, colorScheme)),
                       limits = as.character(seq_along(legendLabels)),
                       labels = legendLabels,
@@ -171,7 +179,7 @@ timepointHeatmap_sample <- function(data) {
   # transform data into matrix with rows for assay, columns for timepoint
   # Get relevant data
   # By sample
-  td <- data[, .N, c("timepoint", "assay", "study")]
+  td <- data[, .N, c("timepoint", "assay")]
   
   # Remove samples with no assay data
   td <- td[!is.na(assay) & timepoint != "Unknown"]
@@ -193,7 +201,9 @@ timepointHeatmap_study <- function(data) {
                    breaks = c(0, 1, 2, 3, 4, 5, 10, Inf),
                    legendLabels = c("0", "1", "2", "3", "4", "5", "6-10", "11+"),
                    legendName = "Number of\nStudies",
-                   colorScheme = "Purples")
+                   colorScheme = "Purples") +
+    theme(axis.title = element_text(),
+          axis.title.y = element_blank())
 }
 
 timepointHeatmap_sample_small <- function(data,
@@ -209,7 +219,6 @@ timepointHeatmap_sample_small <- function(data,
   timepointHeatmap(td, 
                    breaks = breaks,
                    abbreviateAssayNames = TRUE) +
-    xlab("Week") +
     coord_equal() +
     theme(legend.position = "bottom",
           legend.direction = "horizontal",
