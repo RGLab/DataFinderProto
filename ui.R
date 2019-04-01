@@ -13,7 +13,7 @@ fluidPage(
   ),
   
   # title ------------------------------
-  titlePanel("Data Finder (0.1.1)"),
+  titlePanel("Data Finder (0.1.2)"),
   
   # Main -------------------------------
   sidebarLayout(
@@ -27,19 +27,28 @@ fluidPage(
         # Study ------------------------
         tabPanel("Study",
                  #inputs
-                 uiOutput("studyFilters")
+                 div(
+                   # style = "background:#9E9AC8;",
+                   uiOutput("studyFilters")
+                 )
         ),
         
         # Subject ----------------------
         tabPanel("Participant",
                  # inputs
-                 uiOutput("subjectFilters")
+                 div(
+                   # style = "background:#74C476;",
+                   uiOutput("subjectFilters")
+                 )
         ),
         
         # Sample -----------------------
         tabPanel("Sample",
                  # inputs
-                 uiOutput("sampleFilters")
+                 div(
+                   # style = "background:#FB6A4A;",
+                   uiOutput("sampleFilters")
+                 )
         )
       )
     ),

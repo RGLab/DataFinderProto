@@ -30,10 +30,14 @@ genderBarplot <- function(data) {
   # Transform data so one row per participant
   td <- data[, .(gender = unique(gender)), by = "subjectid"]
   
+  td$gender <- ifelse(td$gender %in% c("Not Specified", "Not_Specified", "Unknown"), "Unknown", td$gender)
+  genderLabels <- c("Female", "Male", "Other", "Unknown")
+  
   # plot data
   ggplot(td, aes(gender)) +
-    geom_bar() + 
+    geom_bar(fill = "#6BAED6") + 
     ggtitle("Gender") +
+    scale_x_discrete(limits = genderLabels) +
     custom_barplot_theme
 }
 
@@ -44,7 +48,7 @@ ageBarplot <- function(data) {
   
   # plot data
   ggplot(td, aes(age)) +
-    geom_bar() + 
+    geom_bar(fill = "#6BAED6") + 
     ggtitle("Age") +
     scale_x_discrete(limits = age_order) +
     custom_barplot_theme
@@ -66,7 +70,7 @@ raceBarplot <- function(data) {
   
   # plot data
   ggplot(td, aes(race)) +
-    geom_bar() + 
+    geom_bar(fill = "#6BAED6") + 
     ggtitle("Race") +
     custom_barplot_theme +
     scale_x_discrete(limits = raceLabels)
@@ -160,7 +164,7 @@ timepointHeatmap <- function(td,
   assays <- unique(td$assay)[order(unique(td$assay), decreasing = TRUE)]
   
   ggplot(d, aes(timepoint, assay)) + 
-    geom_tile(aes(fill = colorIndex)) +
+    geom_tile(aes(fill = colorIndex), color = "white") +
     scale_x_discrete(limits = timepoints_xaxis) +
     scale_y_discrete(limits = assays, labels = assayLabels[assays]) +
     theme(panel.background = element_rect(fill = "white"),
@@ -198,8 +202,8 @@ timepointHeatmap_study <- function(data) {
   td <- td[!is.na(assay) & timepoint != "Unknown"]
   
   timepointHeatmap(td, 
-                   breaks = c(0, 1, 2, 3, 4, 5, 10, Inf),
-                   legendLabels = c("0", "1", "2", "3", "4", "5", "6-10", "11+"),
+                   breaks = c(0, 1, 2, 5, 10, Inf),
+                   legendLabels = c("0", "1", "2", "3-5", "6-10", "11+"),
                    legendName = "Number of\nStudies",
                    colorScheme = "Purples") +
     theme(axis.title = element_text(),

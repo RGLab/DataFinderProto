@@ -26,54 +26,6 @@ data <- get(load("data/cube.RData"))
 
 function(input, output, session) {
   
-  # filter inputs for UI -----
-  output$studyFilters <- renderUI({
-    tagList(
-      checkboxGroupInput(inputId = "species", 
-                         label = "Species", 
-                         choices = unique(data$species)),
-      checkboxGroupInput(inputId = "condition", 
-                         label = "Disease",
-                         choices = unique(data$condition)),
-      checkboxGroupInput(inputId = "exposure_material",
-                         label = "Vaccine",
-                         choices = unique(data$exposure_material)),
-      checkboxGroupInput(inputId = "study_type",
-                         label = "Study Type",
-                         choices = unique(data$study_type)),
-      div()
-    )
-  })
-  output$subjectFilters <- renderUI({
-    tagList(
-      checkboxGroupInput(inputId = "gender",
-                         label = "Gender",
-                         choices = unique(data$gender)),
-      checkboxGroupInput(inputId = "race",
-                         label = "Race",
-                         choices = unique(data$race)),
-      checkboxGroupInput(inputId = "age",
-                         label = "Age",
-                         choices = unique(data$age)),
-      div()
-    )
-  })
-  output$sampleFilters <- renderUI({
-    tagList(
-      checkboxGroupInput(inputId = "assay",
-                         label = "Assay",
-                         choices = unique(data$assay)),
-      checkboxGroupInput(inputId = "sample_type",
-                         label = "Cell Type",
-                         choices = unique(data$sample_type)),
-      checkboxGroupInput("timepoint",
-                         label = "Day of Study",
-                         choices = unique(data$timepoint)),
-      div()
-    )
-  })
-  
-  
   # Reactives ---------------------------
     # Filtered dataframe
   # NOTE:  If nothing is checked for checkboxGroupInput, 
@@ -97,6 +49,59 @@ function(input, output, session) {
   })
   # Reactive filtered dataframe
   # Use filterData helper function
+  # Helpers -----
+  .createFilter <- function(id, label, rdata) {
+    # Get choice names with reactive summary numberss
+    choiceNames <- paste0(unique(data[[id]]), " (0)")
+    names(choiceNames) <- unique(data[[id]])
+    choices <- sapply(unique(rdata[[id]]), function(x)paste0(x, " (", nrow(rdata[rdata[[id]] == x]), ")"), USE.NAMES = TRUE)
+    if (NA %in% names(choices)) choices <- choices[-which(is.na(names(choices)))]
+    choiceNames[names(choices)] <- choices
+    names(choiceNames) <- NULL
+    
+    # Create the input
+    
+    checkboxGroupInput(inputId = id,
+                       label = label,
+                       choiceValues = unique(data[[id]]),
+                       choiceNames = choiceNames,
+                       selected = input[[id]])
+  }
+  
+  # filter inputs for UI -----
+  output$studyFilters <- renderUI({
+    print("rendering study filters")
+    rdata <- reactiveData()
+    
+    tagList(
+      .createFilter("species", "Species", rdata),
+      .createFilter("condition", "Disease", rdata),
+      .createFilter("exposure_material", "Vaccine", rdata),
+      .createFilter("study_type", "Study Type", rdata),
+      div()
+    )
+  })
+  
+  output$subjectFilters <- renderUI({
+    print("rendering subject filters")
+    rdata <- reactiveData()
+    tagList(
+      .createFilter("gender", "Gender", rdata),
+      .createFilter("race","Race", rdata),
+      .createFilter("age", "Age", rdata),
+      div()
+    )
+  })
+  output$sampleFilters <- renderUI({
+    print("rendering sample filters")
+    rdata <- reactiveData()
+    tagList(
+      .createFilter("assay", "Assay", rdata),
+      .createFilter("sample_type", "Cell Type", rdata),
+      .createFilter("timepoint", "Study Day", rdata),
+      div()
+    )
+  })
   
   
   # Study cards ----
