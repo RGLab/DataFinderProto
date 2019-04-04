@@ -32,7 +32,6 @@ function(input, output, session) {
   # NOTE:  If nothing is checked for checkboxGroupInput, 
   # the input value is NULL. Otherwise, it is a character vector. 
   reactiveData <- reactive({
-    print("filtering data")
     rdata <- filterData(
       data,
       list(
@@ -49,25 +48,15 @@ function(input, output, session) {
       )
     )
 
-    # Update filter text
-    mapply(c(
-      "species",
-      "condition",
-      "exposure_material",
-      "study_type",
-      "gender",
-      "race",
-      "age",
-      "assay",
-      "sample_type",
-      "timepoint"
-    ),
-    FUN = function(filter) {
-      print(paste0("updating ", filter))
+    # Update filter text ----
+    mapply(
+      filter = c("species", "condition","exposure_material","study_type","gender","race","age","assay","sample_type","timepoint"),
+      filterClass = c(rep("study", 4), rep("subjectid", 3), rep("sampleid", 3)),
+    FUN = function(filter, filterClass) {
       # Get choice names with reactive summary numberss
       choiceNames <- paste0(unique(data[[filter]]), " (0)")
       names(choiceNames) <- unique(data[[filter]])
-      choices <- sapply(unique(rdata[[filter]]), function(x)paste0(x, " (", nrow(rdata[rdata[[filter]] == x]), ")"), USE.NAMES = TRUE)
+      choices <- sapply(unique(rdata[[filter]]), function(x)paste0(x, " (", nrow(rdata[rdata[[filter]] == x, .(filterClass), filterClass]), ")"), USE.NAMES = TRUE)
       if (NA %in% names(choices)) choices <- choices[-which(is.na(names(choices)))]
       choiceNames[names(choices)] <- choices
       names(choiceNames) <- NULL
