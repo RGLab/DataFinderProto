@@ -79,18 +79,16 @@ function(input, output, session) {
   # Reactive filtered dataframe
   # Use filterData helper function
   # Helpers -----
-  .createFilterButton <- function(id, label) {
-    
-  }
   .createFilter <- function(id, label, rdata) {
 
     return(
       tagList(
-        bs_attach_collapse(
-          bs_button(paste0("+ ", label),
-                    button_type = "default",
-                    style = "display:block;width:100%;text-align:left;"),
-          id_collapse = paste0(id, "_collapse")
+        HTML(
+          paste0(
+            '<button class="btn btn-default filterbutton" data-toggle="collapse" data-target=#', id, '_collapse>', 
+            label,
+            '</button>'
+          )
         ),
         bs_collapse(
           id = paste0(id, "_collapse"),
@@ -105,20 +103,21 @@ function(input, output, session) {
         )
       )
     )
-    
-    
+  }
+  filterDiv <- function(...){
+    div(..., class = "filtertext")
   }
   
   # filter inputs for UI -----
   output$studyFilters <- renderUI({
     tagList(
-      HTML("<div>Only include studies with</div>"),
+      div("Only include studies with"),
       .createFilter("species", "These species"),
-      HTML("<div style='text-align:center;'>AND</div>"),
+      filterDiv("AND"),
       .createFilter("study_type", "These data types"),
-      HTML("<div style='text-align:center;'>Studying</div>"),
+      filterDiv("AND"),
       .createFilter("condition", "These diseases"),
-      HTML("<div style = 'text-align:center;'>AND</div>"),
+      filterDiv("AND"),
       .createFilter("exposure_material", "These vaccines"),
       div()
     )
@@ -126,17 +125,24 @@ function(input, output, session) {
   
   output$subjectFilters <- renderUI({
     tagList(
-      .createFilter("gender", "Gender"),
-      .createFilter("race","Race"),
-      .createFilter("age", "Age"),
+      div("Only include participants where"),
+      .createFilter("gender", "Gender is any of"),
+      filterDiv("AND"),
+      .createFilter("race","Race is any of"),
+      filterDiv("AND"),
+      .createFilter("age", "Age is any of"),
       div()
     )
   })
   output$sampleFilters <- renderUI({
+    anyallDropdown <- "<select><option>any of</option><option>all of</option></select>"
     tagList(
-      .createFilter("assay", "Assay"),
-      .createFilter("sample_type", "Cell Type"),
-      .createFilter("timepoint", "Study Day"),
+      div("Only include participants with"),
+      .createFilter("assay", paste0(anyallDropdown, "these assays")),
+      filterDiv("AND"),
+      .createFilter("sample_type", paste0(anyallDropdown, "these cell types")),
+      filterDiv("AT"),
+      .createFilter("timepoint", paste0(anyallDropdown, "these study days")),
       div()
     )
   })

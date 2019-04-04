@@ -7,4 +7,9 @@
 .filterbutton {
   display:block;
   width:100%;
+  text-align:left;
+}
+
+.filtertext {
+  text-align:center;
 }
