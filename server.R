@@ -154,14 +154,14 @@ function(input, output, session) {
   
   
   
-  # 
-  # # Study cards ----
-  # output$studyCards <- renderUI({
-  #   studies <- unique(reactiveData()$study)
-  #   tagList <- lapply(studies, createStudyCard, reactiveData(), output)
-  #   tagList(tagList)
-  # })
-  # 
+
+  # Study cards ----
+  output$studyCards <- renderUI({
+    studies <- unique(reactiveData()$study)
+    tagList <- lapply(studies, createStudyCard, reactiveData(), output)
+    tagList(tagList)
+  })
+
   
   # Plots for visualization panel ----------
   # Use helper plotting functions
