@@ -5,6 +5,7 @@
 # studies and participants available.
 
 library(shiny)
+library(bsplus)
 library(ImmuneSpaceR)
 library(Rlabkey)
 library(ggplot2)
@@ -31,7 +32,8 @@ function(input, output, session) {
   # NOTE:  If nothing is checked for checkboxGroupInput, 
   # the input value is NULL. Otherwise, it is a character vector. 
   reactiveData <- reactive({
-    filterData(
+    print("filtering data")
+    rdata <- filterData(
       data,
       list(
         species = input$species,
@@ -46,71 +48,120 @@ function(input, output, session) {
         timepoint = input$timepoint
       )
     )
+
+    # Update filter text
+    mapply(c(
+      "species",
+      "condition",
+      "exposure_material",
+      "study_type",
+      "gender",
+      "race",
+      "age",
+      "assay",
+      "sample_type",
+      "timepoint"
+    ),
+    FUN = function(filter) {
+      print(paste0("updating ", filter))
+      # Get choice names with reactive summary numberss
+      choiceNames <- paste0(unique(data[[filter]]), " (0)")
+      names(choiceNames) <- unique(data[[filter]])
+      choices <- sapply(unique(rdata[[filter]]), function(x)paste0(x, " (", nrow(rdata[rdata[[filter]] == x]), ")"), USE.NAMES = TRUE)
+      if (NA %in% names(choices)) choices <- choices[-which(is.na(names(choices)))]
+      choiceNames[names(choices)] <- choices
+      names(choiceNames) <- NULL
+      # Replace checkbox groups
+      removeUI(paste0("#",filter,"_checkboxgroup"), immediate = TRUE)
+      insertUI(paste0("#",filter,"_collapse"),
+               "beforeEnd",
+               div(id = paste0(filter,"_checkboxgroup"),
+                   checkboxGroupInput(inputId = filter,
+                                      label = NULL,
+                                      choiceValues = unique(data[[filter]]),
+                                      choiceNames = choiceNames,
+                                      selected = input[[filter]])),
+               immediate = TRUE)
+
+    })
+    return(rdata)
   })
+  
   # Reactive filtered dataframe
   # Use filterData helper function
   # Helpers -----
+  .createFilterButton <- function(id, label) {
+    
+  }
   .createFilter <- function(id, label, rdata) {
-    # Get choice names with reactive summary numberss
-    choiceNames <- paste0(unique(data[[id]]), " (0)")
-    names(choiceNames) <- unique(data[[id]])
-    choices <- sapply(unique(rdata[[id]]), function(x)paste0(x, " (", nrow(rdata[rdata[[id]] == x]), ")"), USE.NAMES = TRUE)
-    if (NA %in% names(choices)) choices <- choices[-which(is.na(names(choices)))]
-    choiceNames[names(choices)] <- choices
-    names(choiceNames) <- NULL
+
+    return(
+      tagList(
+        bs_attach_collapse(
+          bs_button(paste0("+ ", label),
+                    button_type = "default",
+                    style = "display:block;width:100%;text-align:left;"),
+          id_collapse = paste0(id, "_collapse")
+        ),
+        bs_collapse(
+          id = paste0(id, "_collapse"),
+          content = div(
+            id = paste0(id, "_checkboxgroup"),
+            checkboxGroupInput(inputId = id,
+                               label = NULL,
+                               choiceValues = unique(data[[id]]),
+                               choiceNames = unique(data[[id]])
+            )
+          )
+        )
+      )
+    )
     
-    # Create the input
     
-    checkboxGroupInput(inputId = id,
-                       label = label,
-                       choiceValues = unique(data[[id]]),
-                       choiceNames = choiceNames,
-                       selected = input[[id]])
   }
   
   # filter inputs for UI -----
   output$studyFilters <- renderUI({
-    print("rendering study filters")
-    rdata <- reactiveData()
-    
     tagList(
-      .createFilter("species", "Species", rdata),
-      .createFilter("condition", "Disease", rdata),
-      .createFilter("exposure_material", "Vaccine", rdata),
-      .createFilter("study_type", "Study Type", rdata),
+      HTML("<div>Only include studies with</div>"),
+      .createFilter("species", "These species"),
+      HTML("<div style='text-align:center;'>AND</div>"),
+      .createFilter("study_type", "These data types"),
+      HTML("<div style='text-align:center;'>Studying</div>"),
+      .createFilter("condition", "These diseases"),
+      HTML("<div style = 'text-align:center;'>AND</div>"),
+      .createFilter("exposure_material", "These vaccines"),
       div()
     )
   })
   
   output$subjectFilters <- renderUI({
-    print("rendering subject filters")
-    rdata <- reactiveData()
     tagList(
-      .createFilter("gender", "Gender", rdata),
-      .createFilter("race","Race", rdata),
-      .createFilter("age", "Age", rdata),
+      .createFilter("gender", "Gender"),
+      .createFilter("race","Race"),
+      .createFilter("age", "Age"),
       div()
     )
   })
   output$sampleFilters <- renderUI({
-    print("rendering sample filters")
-    rdata <- reactiveData()
     tagList(
-      .createFilter("assay", "Assay", rdata),
-      .createFilter("sample_type", "Cell Type", rdata),
-      .createFilter("timepoint", "Study Day", rdata),
+      .createFilter("assay", "Assay"),
+      .createFilter("sample_type", "Cell Type"),
+      .createFilter("timepoint", "Study Day"),
       div()
     )
   })
   
   
-  # Study cards ----
-  output$studyCards <- renderUI({
-    studies <- unique(reactiveData()$study)
-    tagList <- lapply(studies, createStudyCard, reactiveData(), output)
-    tagList(tagList)
-  })
   
+  # 
+  # # Study cards ----
+  # output$studyCards <- renderUI({
+  #   studies <- unique(reactiveData()$study)
+  #   tagList <- lapply(studies, createStudyCard, reactiveData(), output)
+  #   tagList(tagList)
+  # })
+  # 
   
   # Plots for visualization panel ----------
   # Use helper plotting functions

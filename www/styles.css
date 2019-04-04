@@ -3,3 +3,8 @@
   width:30%;
   height:200px
 }
+
+.filterbutton {
+  display:block;
+  width:100%;
+}
