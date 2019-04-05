@@ -53,9 +53,26 @@ function(input, output, session) {
       filter = c("species", "condition","exposure_material","study_type","gender","race","age","assay","sample_type","timepoint"),
       filterClass = c(rep("study", 4), rep("subjectid", 3), rep("sampleid", 3)),
     FUN = function(filter, filterClass) {
-      # Get choice names with reactive summary numberss
-      choiceNames <- paste0(unique(data[[filter]]), " (0)")
-      names(choiceNames) <- unique(data[[filter]])
+      # Get choice names with reactive summary numbers
+      # Make sure age and timepoint are in the correct order
+      if (filter == "age") {
+        choiceNames <- paste0(c("0-10", "11-20", "21-30", "31-40", "41-50", "51-60", "61-70", "> 70", "Unknown"), "(0)")
+        names(choiceNames) <- c("0-10", "11-20", "21-30", "31-40", "41-50", "51-60", "61-70", "> 70", "Unknown")
+        choiceValues <- names(choiceNames)
+      } else if (filter == "timepoint") {
+        choiceNames <- paste0( c("<0", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12",
+                                 "13", "14", "15-27", "28", "29-55", "56", ">56", "Unknown", NA),
+                               "(0)")
+        names(choiceNames) <- c("<0", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12",
+                               "13", "14", "15-27", "28", "29-55", "56", ">56", "Unknown", NA)
+        choiceValues <- names(choiceNames)
+      } else {
+        choiceNames <- paste0(unique(data[[filter]]), " (0)")
+        names(choiceNames) <- unique(data[[filter]])
+        # order alphabetically
+        choiceNames <- choiceNames[order(names(choiceNames), na.last = TRUE)]
+        choiceValues <- names(choiceNames)
+      }
       choices <- sapply(unique(rdata[[filter]]), function(x)paste0(x, " (", nrow(rdata[rdata[[filter]] == x, .(filterClass), filterClass]), ")"), USE.NAMES = TRUE)
       if (NA %in% names(choices)) choices <- choices[-which(is.na(names(choices)))]
       choiceNames[names(choices)] <- choices
@@ -67,7 +84,7 @@ function(input, output, session) {
                div(id = paste0(filter,"_checkboxgroup"),
                    checkboxGroupInput(inputId = filter,
                                       label = NULL,
-                                      choiceValues = unique(data[[filter]]),
+                                      choiceValues = choiceValues,
                                       choiceNames = choiceNames,
                                       selected = input[[filter]])),
                immediate = TRUE)
@@ -76,7 +93,6 @@ function(input, output, session) {
     return(rdata)
   })
   
-  # Reactive filtered dataframe
   # Use filterData helper function
   # Helpers -----
   .createFilter <- function(id, label, rdata) {
@@ -153,6 +169,8 @@ function(input, output, session) {
   # Study cards ----
   output$studyCards <- renderUI({
     studies <- unique(reactiveData()$study)
+    # Sort studies by number
+    studies <- paste0("SDY", sort(as.numeric(gsub("SDY", "", studies))))
     tagList <- lapply(studies, createStudyCard, reactiveData(), output)
     tagList(tagList)
   })
