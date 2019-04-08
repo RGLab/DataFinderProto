@@ -12,6 +12,10 @@ library(ggplot2)
 library(data.table)
 library(UpSetR)
 
+# Set up cache
+# Be sure to wipe cache if plotting function changes
+shinyOptions(cache = diskCache("plot-cache"))
+
 # Source helper files
 helperFiles <- list.files("helpers")
 for (file in helperFiles) {
@@ -163,7 +167,7 @@ function(input, output, session) {
     )
   })
   
-  # Filter list -----
+  # Filter indicators -----
   output$filterList <- renderUI({
     i <- reactiveValuesToList(input)
     studyList <- list()
@@ -171,27 +175,51 @@ function(input, output, session) {
     sampleList <- list()
     for (x in c("exposure_material", "study_type", "condition", "species")) {
       if (!is.null(i[[x]])) {
-        studyList[[x]] <- div(class = "filterindicator study", 
-                              span(
-                                x, "=", i[[x]]
-                              ))
+        if (length(i[[x]]) > 1) {
+          studyList[[x]] <- div(class = "filterindicator study",
+                                span(
+                                  x, "is", paste0(i[[x]], collapse = " OR ")
+                                ))
+        } else {
+          studyList[[x]] <- div(class = "filterindicator study", 
+                                span(
+                                  x, "is", i[[x]]
+                                ))
+        }
+        
       }
     }
     
       for (x in c("gender", "race", "age")) {
         if (!is.null(i[[x]])) {
-          participantList[[x]] <- div(class = "filterindicator participant", 
-                                span(
-                                  x, "=", i[[x]]
-                                ))
+          if (length(i[[x]]) > 1) {
+            participantList[[x]] <- div(class = "filterindicator participant", 
+                                        span(
+                                          x, "is", paste0(i[[x]], collapse = " OR ")
+                                        ))
+          } else {
+            participantList[[x]] <- div(class = "filterindicator participant", 
+                                  span(
+                                    x, "is", i[[x]]
+                                  ))
+          }
+          
         }
       }
     for (x in c("assay", "sample_type", "timepoint")) {
       if (!is.null(i[[x]])) {
-        sampleList[[x]] <- div(class = "filterindicator sample", 
-                                    span(
-                                      x, "=", i[[x]]
-                                    ))
+        if (length(i[[x]]) > 1) {
+          sampleList[[x]] <- div(class = "filterindicator sample", 
+                                 span(
+                                   x, "is", paste0(i[[x]], collapse = " OR ")
+                                 ))
+        } else {
+          sampleList[[x]] <- div(class = "filterindicator sample", 
+                                 span(
+                                   x, "is", i[[x]]
+                                 ))
+        }
+
       }
     }
     
