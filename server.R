@@ -163,7 +163,53 @@ function(input, output, session) {
     )
   })
   
-  
+  # Filter list -----
+  output$filterList <- renderUI({
+    i <- reactiveValuesToList(input)
+    studyList <- list()
+    participantList <- list()
+    sampleList <- list()
+    for (x in c("exposure_material", "study_type", "condition", "species")) {
+      if (!is.null(i[[x]])) {
+        studyList[[x]] <- div(class = "filterindicator study", 
+                              span(
+                                x, "=", i[[x]]
+                              ))
+      }
+    }
+    
+      for (x in c("gender", "race", "age")) {
+        if (!is.null(i[[x]])) {
+          participantList[[x]] <- div(class = "filterindicator participant", 
+                                span(
+                                  x, "=", i[[x]]
+                                ))
+        }
+      }
+    for (x in c("assay", "sample_type", "timepoint")) {
+      if (!is.null(i[[x]])) {
+        sampleList[[x]] <- div(class = "filterindicator sample", 
+                                    span(
+                                      x, "=", i[[x]]
+                                    ))
+      }
+    }
+    
+    tagList(
+      div(
+        span("Showing studies where: "),
+        studyList
+      ),
+      div(
+        span("Showing participants where: "),
+        participantList
+      ),
+      div(
+        span("Showing samples where: "),
+        sampleList
+      )
+    )
+  })
   
 
   # Study cards ----

@@ -13,3 +13,21 @@
 .filtertext {
   text-align:center;
 }
+
+.filterindicator {
+  display:inline-block;
+  border-radius:10px;
+  color:white;
+}
+
+.filterindicator.study {
+  background:#006D2C;
+}
+
+.filterindicator.participant {
+  background:#54278F;
+}
+
+.filterindicator.sample {
+  background:#08519C;
+}
