@@ -15,7 +15,7 @@ library(UpSetR)
 
 # Set up cache
 # Be sure to wipe cache if plotting function changes
-shinyOptions(cache = diskCache("plot-cache"))
+shinyOptions(cache = diskCache("~/shiny-cache/DataFinderProto"))
 
 # Source helper files
 helperFiles <- list.files("helpers")
