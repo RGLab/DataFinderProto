@@ -5,6 +5,7 @@
 # studies and participants available.
 
 library(shiny)
+library(shinyjs)
 library(bsplus)
 library(ImmuneSpaceR)
 library(Rlabkey)
@@ -57,50 +58,47 @@ function(input, output, session) {
       filter = c("species", "condition","exposure_material","study_type","gender","race","age","assay","sample_type","timepoint"),
       filterClass = c(rep("study", 4), rep("subjectid", 3), rep("sampleid", 3)),
     FUN = function(filter, filterClass) {
-      # Get choice names with reactive summary numbers
-      # Make sure age and timepoint are in the correct order
-      if (filter == "age") {
-        choiceNames <- paste0(c("0-10", "11-20", "21-30", "31-40", "41-50", "51-60", "61-70", "> 70", "Unknown"), "(0)")
-        names(choiceNames) <- c("0-10", "11-20", "21-30", "31-40", "41-50", "51-60", "61-70", "> 70", "Unknown")
-        choiceValues <- names(choiceNames)
-      } else if (filter == "timepoint") {
-        choiceNames <- paste0( c("<0", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12",
-                                 "13", "14", "15-27", "28", "29-55", "56", ">56", "Unknown", NA),
-                               "(0)")
-        names(choiceNames) <- c("<0", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12",
-                               "13", "14", "15-27", "28", "29-55", "56", ">56", "Unknown", NA)
-        choiceValues <- names(choiceNames)
-      } else {
-        choiceNames <- paste0(unique(data[[filter]]), " (0)")
-        names(choiceNames) <- unique(data[[filter]])
-        # order alphabetically
-        choiceNames <- choiceNames[order(names(choiceNames), na.last = TRUE)]
-        choiceValues <- names(choiceNames)
-      }
-      choices <- sapply(unique(rdata[[filter]]), function(x)paste0(x, " (", nrow(rdata[rdata[[filter]] == x, .(filterClass), filterClass]), ")"), USE.NAMES = TRUE)
-      if (NA %in% names(choices)) choices <- choices[-which(is.na(names(choices)))]
-      choiceNames[names(choices)] <- choices
-      names(choiceNames) <- NULL
-      # Replace checkbox groups
-      removeUI(paste0("#",filter,"_checkboxgroup"), immediate = TRUE)
-      insertUI(paste0("#",filter,"_collapse"),
-               "beforeEnd",
-               div(id = paste0(filter,"_checkboxgroup"),
-                   checkboxGroupInput(inputId = filter,
-                                      label = NULL,
-                                      choiceValues = choiceValues,
-                                      choiceNames = choiceNames,
-                                      selected = input[[filter]])),
-               immediate = TRUE)
-
+    # Update summary numbers
+      lapply(unique(data[[filter]]), 
+             function (x) {
+               # Get selector id
+               id = paste0(filter, "_", tolower(gsub("\\s|[[:punct:]]", "_", x)))
+               # Get summary number
+               count <- paste0(" (", nrow(rdata[rdata[[filter]] == x, .(filterClass), filterClass]), ")")
+               
+               shinyjs::html(selector = paste0("#", id), 
+                             html = count,
+                             add = FALSE)
+             })
     })
+      
     return(rdata)
   })
   
   # Use filterData helper function
   # Helpers -----
   .createFilter <- function(id, label, rdata) {
+    
+    # Get choice values and names in correct order
+    if (id == "age") {
+      choiceNames <- paste0(c("0-10", "11-20", "21-30", "31-40", "41-50", "51-60", "61-70", "> 70", "Unknown"))
+      choiceValues <- choiceNames
+    } else if (id == "timepoint") {
+      choiceNames <- paste0( c("<0", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12",
+                               "13", "14", "15-27", "28", "29-55", "56", ">56", "Unknown", NA))
+      choiceValues <- choiceNames
+    } else {
+      choiceNames <- unique(data[[id]])
+      # order alphabetically
+      choiceNames <- choiceNames[order(choiceNames, na.last = TRUE)]
+      choiceValues <- choiceNames
+    }
+    choiceNames <- lapply(choiceNames, 
+                        function(x) {
+                          HTML(paste0(x, "<span id=", paste0(id, "_", tolower(gsub("\\s|[[:punct:]]", "_", x))), "> (0)</span>"))
+                          })
 
+    
     return(
       tagList(
         HTML(
@@ -116,18 +114,22 @@ function(input, output, session) {
             id = paste0(id, "_checkboxgroup"),
             checkboxGroupInput(inputId = id,
                                label = NULL,
-                               choiceValues = unique(data[[id]]),
-                               choiceNames = unique(data[[id]])
+                               choiceValues = choiceValues,
+                               choiceNames = choiceNames
             )
           )
         )
       )
     )
+    
+    
   }
   filterDiv <- function(...){
     div(..., class = "filtertext")
   }
-  
+
+
+
   # filter inputs for UI -----
   output$studyFilters <- renderUI({
     tagList(

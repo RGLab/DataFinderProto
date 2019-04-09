@@ -7,13 +7,14 @@
 
 # Define UI 
 fluidPage(
+  useShinyjs(),
   
   tags$head(
     tags$link(rel = "stylesheet", type = "text/css", href = "styles.css")
   ),
   
   # title ------------------------------
-  titlePanel("Data Finder (v1.3.1)"),
+  titlePanel("Data Finder (v1.3.2)"),
   
   # Main -------------------------------
   sidebarLayout(
