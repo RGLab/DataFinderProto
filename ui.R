@@ -10,7 +10,10 @@ fluidPage(
   shinyjs::useShinyjs(),
   
   tags$head(
-    tags$link(rel = "stylesheet", type = "text/css", href = "styles.css")
+    tags$link(rel = "stylesheet", type = "text/css", href = "styles.css"),
+    tags$script(HTML("$(document).on('click', '.dropdown-menu', function (e) {
+  e.stopPropagation();
+});"))
   ),
   
   # title ------------------------------
@@ -32,7 +35,7 @@ fluidPage(
           p("Include data from..."),
           div(class = "dropdown",
               div(class = "btn-group", role = "group", style = "width:100%",
-                  tags$button("Studies where", class = "btn btn-default", style="width:90%"),
+                  tags$button("Studies where", class = "btn btn-default", style="width:90%", type = "button"),
                   tags$button(style="text-align:left;", 
                               HTML("&#9654;"), 
                               class = "btn btn-default dropdown-toggle", 
@@ -40,9 +43,9 @@ fluidPage(
                               "data-toggle"="dropdown", 
                               style = "width:10%"),
               div( class="dropdown-menu", 
-                   style = "align:relative;left:100%;top:-5px",
+                   style = "align:relative;left:100%;top:0%",
                      # style = "background:#9E9AC8;",
-                     uiOutput("studyFilters")
+                     tags$form(uiOutput("studyFilters"))
                    )
           ))
 
