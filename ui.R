@@ -22,36 +22,35 @@ fluidPage(
     # LHS (filters) --------------------
     sidebarPanel(
       
-      # Tabbed Filter selectors --------
-      tabsetPanel(
-        
-        # Study ------------------------
-        tabPanel("Study",
-                 #inputs
-                 div(
-                   # style = "background:#9E9AC8;",
-                   uiOutput("studyFilters")
-                 )
-        ),
-        
-        # Subject ----------------------
-        tabPanel("Participant",
-                 # inputs
-                 div(
-                   # style = "background:#74C476;",
-                   uiOutput("subjectFilters")
-                 )
-        ),
-        
-        # Sample -----------------------
-        tabPanel("Sample",
-                 # inputs
-                 div(
-                   # style = "background:#FB6A4A;",
-                   uiOutput("sampleFilters")
-                 )
+      # Choose ui based on ui options
+      if (uiOption == 1) {
+        source("helpers/ui1/ui1_ui.R")
+        ui1()
+      } else if (uiOption == 2) {
+        tagList(
+          h2("Filters"),
+          p("Include data from..."),
+          div(class = "dropdown",
+              div(class = "btn-group", role = "group", style = "width:100%",
+                  tags$button("Studies where", class = "btn btn-default", style="width:90%"),
+                  tags$button(style="text-align:left;", 
+                              HTML("&#9654;"), 
+                              class = "btn btn-default dropdown-toggle", 
+                              type = "button", 
+                              "data-toggle"="dropdown", 
+                              style = "width:10%"),
+              div( class="dropdown-menu", 
+                   style = "align:relative;left:100%;top:-5px",
+                     # style = "background:#9E9AC8;",
+                     uiOutput("studyFilters")
+                   )
+          ))
+
         )
-      )
+        
+
+      }
+      
     ),
     
     # RHS (visualizations) -------------
