@@ -24,41 +24,25 @@ fluidPage(
     
     # LHS (filters) --------------------
     sidebarPanel(
+      h2("Filters"),
+      p("Include data from... "),
       
-      # Choose ui based on ui options
-      if (uiOption == 1) {
-        source("helpers/ui1/ui1_ui.R")
-        ui1()
-      } else if (uiOption == 2) {
-        tagList(
-          h2("Filters"),
-          p("Include data from..."),
-          div(class = "dropdown",
-              div(class = "btn-group", role = "group", style = "width:100%",
-                  tags$button("Studies where", class = "btn btn-default", style="width:90%", type = "button"),
-                  tags$button(style="text-align:left;", 
-                              HTML("&#9654;"), 
-                              class = "btn btn-default dropdown-toggle", 
-                              type = "button", 
-                              "data-toggle"="dropdown", 
-                              style = "width:10%"),
-              div( class="dropdown-menu", 
-                   style = "align:relative;left:100%;top:0%",
-                     # style = "background:#9E9AC8;",
-                     tags$form(uiOutput("studyFilters"))
-                   )
-          ))
-
-        )
+      # Build query
+      div(
+        filterButton("Studies where", "study"),
+        uiOutput("studyIndicators"),
+        filterButton("Participants where", "subject"),
+        uiOutput("subjectIndicators"),
+        filterButton("Participants with data where", "sample"),
+        uiOutput("sampleIndicators")
+      )
+        
         
 
-      }
-      
     ),
     
     # RHS (visualizations) -------------
     mainPanel(
-      uiOutput("filterList"),
       tabsetPanel(
         tabPanel("Studies",
                  uiOutput("studyCards")
