@@ -17,7 +17,7 @@ fluidPage(
   ),
   
   # title ------------------------------
-  titlePanel("Data Finder (v1.4.0)"),
+  titlePanel("Data Finder (v1.4.1)"),
   
   # Main -------------------------------
   sidebarLayout(
