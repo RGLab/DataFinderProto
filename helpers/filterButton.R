@@ -9,7 +9,7 @@ filterButton <- function(buttonText, filterClass) {
                       "data-toggle"="dropdown", 
                       style = "width:10%"),
           div( class="dropdown-menu", 
-               style = "align:relative;left:100%;top:0%",
+               style = "left:100%;top:0%",
                uiOutput(paste0(filterClass, "Filters"))
           )
       )

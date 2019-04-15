@@ -24,7 +24,9 @@ fluidPage(
     
     # LHS (filters) --------------------
     sidebarPanel(
-      h2("Filters"),
+      h2("Filters" ,
+         div(style="position:absolute;right:10%;top:35px",
+             actionButton("clear_input", "Clear All"))),
       p("Include data from... "),
       
       # Build query
@@ -33,7 +35,7 @@ fluidPage(
         uiOutput("studyIndicators"),
         filterButton("Participants where", "subject"),
         uiOutput("subjectIndicators"),
-        filterButton("Participants with data where", "sample"),
+        filterButton("Participants with data from", "sample"),
         uiOutput("sampleIndicators")
       )
         

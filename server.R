@@ -116,40 +116,58 @@ function(input, output, session) {
   
     output$studyFilters <- renderUI({
       tagList(
-        div("Only include studies with"),
-        .createFilter("species", "These species"),
-        filterDiv("AND"),
-        .createFilter("study_type", "These data types"),
-        filterDiv("AND"),
-        .createFilter("condition", "These diseases"),
-        filterDiv("AND"),
-        .createFilter("exposure_material", "These vaccines"),
-        div()
+        div(class = "filter-dropdown",
+            .createFilter("species", "Species is"),
+            filterDiv("AND"),
+            .createFilter("study_type", "Study type is"),
+            filterDiv("AND"),
+            .createFilter("condition", "Disease studied is"),
+            filterDiv("AND"),
+            .createFilter("exposure_material", "Vaccine studied is"),
+            div()
+            )
+        
       )
     })
     
     output$subjectFilters <- renderUI({
       tagList(
-        div("Only include participants where"),
-        .createFilter("gender", "Gender is any of"),
-        filterDiv("AND"),
-        .createFilter("race","Race is any of"),
-        filterDiv("AND"),
-        .createFilter("age", "Age is any of"),
-        div()
+        div(class="filter-dropdown",
+            .createFilter("gender", "Gender is any of"),
+            filterDiv("AND"),
+            .createFilter("race","Race is any of"),
+            filterDiv("AND"),
+            .createFilter("age", "Age is any of"),
+            div()
+            )
+        
       )
     })
     output$sampleFilters <- renderUI({
       anyallDropdown <- "<select><option>any of</option><option>all of</option></select>"
       tagList(
-        div("Only include participants with"),
-        .createFilter("assay", paste0(anyallDropdown, "these assays")),
-        filterDiv("AND"),
-        .createFilter("sample_type", paste0(anyallDropdown, "these cell types")),
-        filterDiv("AT"),
-        .createFilter("timepoint", paste0(anyallDropdown, "these study days")),
-        div()
+        div(class="filter-dropdown",
+            .createFilter("assay", paste0(anyallDropdown, "these assays")),
+            filterDiv("AND"),
+            .createFilter("sample_type", paste0(anyallDropdown, "these cell types")),
+            filterDiv("AT"),
+            .createFilter("timepoint", paste0(anyallDropdown, "these study days")),
+            div()
+            )
       )
+    })
+    
+    # Clear filter button action -------
+    observeEvent(input$clear_input, {
+      checkboxIds <- c("species", "study_type", "condition", "exposure_material", "gender", 
+                       "race", "age", "assay", "sample_type", "timepoint")
+      lapply(checkboxIds, 
+            function(id) {
+              updateCheckboxGroupInput(session,
+                               id,
+                               selected = character(0))
+            })
+      
     })
     
     # Filter indicators -----

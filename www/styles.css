@@ -5,6 +5,9 @@
   height:200px
 }
 
+
+/*------------ filter selectors -----------*/
+
 .filterbutton {
   display:block;
   width:100%;
@@ -14,6 +17,12 @@
 .filtertext {
   text-align:center;
 }
+
+.filter-dropdown {
+  padding:10px;
+}
+
+/*----------- filter indicators -----------*/
 
 .filterindicator {
   display:inline-block;
