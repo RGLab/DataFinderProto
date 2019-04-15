@@ -17,25 +17,31 @@ fluidPage(
   ),
   
   # title ------------------------------
-  titlePanel("Data Finder (v1.4.1)"),
+  titlePanel("Data Finder (v1.4.2)"),
   
   # Main -------------------------------
   sidebarLayout(
     
     # LHS (filters) --------------------
     sidebarPanel(
-      h2("Filters" ,
-         div(style="position:absolute;right:10%;top:35px",
-             actionButton("clear_input", "Clear All"))),
+      
+      tags$button(class = "btn btn-default", 
+                  "Save Participant Group"),
+      div(
+        span("Filters", style="font-size:2.5em;"),
+        div(style="display:inline-block;",
+            actionButton("clear_input", "Clear All"))
+      )
+      ,
       p("Include data from... "),
       
       # Build query
       div(
-        filterButton("Studies where", "study"),
+        .filterSelector("Studies where", "study"),
         uiOutput("studyIndicators"),
-        filterButton("Participants where", "subject"),
+        .filterSelector("Participants where", "subject"),
         uiOutput("subjectIndicators"),
-        filterButton("Participants with data from", "sample"),
+        .filterSelector("Participants with data from", "sample"),
         uiOutput("sampleIndicators")
       )
         
@@ -49,14 +55,14 @@ fluidPage(
         tabPanel("Studies",
                  uiOutput("studyCards")
                  ),
-        tabPanel("Plots",
+        tabPanel("Participants",
                  textOutput("summaryText"),
                  div(plotOutput("genderBarplot", height = "100%"), class = "barplot"),
                  div(plotOutput("ageBarplot", height = "100%"), class = "barplot"),
                  div(plotOutput("raceBarplot", height = "100%"), class = "barplot"),
                  div(plotOutput("timepointHeatmap_study",  height = "200px")),
                  div(plotOutput("timepointHeatmap_sample", height = "200px")),
-                 div(plotOutput("upsetPlot", height = "300px")),
+                 # div(plotOutput("upsetPlot", height = "300px")),
                  div()
                  )
       )

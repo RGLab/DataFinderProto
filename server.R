@@ -50,80 +50,19 @@ function(input, output, session) {
     return(rdata)
   })
   
-  # Filter type based on UI option -----
-  
-  # uiOption1: tabbed filters 
-  # Filters 
-  
-  
-  # Use filterData helper function
-  # Helpers -----
-  .createFilter <- function(id, label, rdata) {
-    
-    # Get choice values and names in correct order
-    if (id == "age") {
-      choiceNames <- paste0(c("0-10", "11-20", "21-30", "31-40", "41-50", "51-60", "61-70", "> 70", "Unknown"))
-      choiceValues <- choiceNames
-    } else if (id == "timepoint") {
-      choiceNames <- paste0( c("<0", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12",
-                               "13", "14", "15-27", "28", "29-55", "56", ">56", "Unknown", NA))
-      choiceValues <- choiceNames
-    } else {
-      choiceNames <- unique(data[[id]])
-      # order alphabetically
-      choiceNames <- choiceNames[order(choiceNames, na.last = TRUE)]
-      choiceValues <- choiceNames
-    }
-    choiceNames <- lapply(choiceNames, 
-                          function(x) {
-                            HTML(paste0(x, "<span id=", paste0(id, "_", tolower(gsub("\\s|[[:punct:]]", "_", x))), "> (0)</span>"))
-                          })
-    
-    
-    return(
-      tagList(
-        HTML(
-          paste0(
-            '<button class="btn btn-default filterbutton" data-toggle="collapse" data-target=#', id, '_collapse>', 
-            label,
-            '</button>'
-          )
-        ),
-        bs_collapse(
-          id = paste0(id, "_collapse"),
-          content = div(
-            id = paste0(id, "_checkboxgroup"),
-            checkboxGroupInput(inputId = id,
-                               label = NULL,
-                               choiceValues = choiceValues,
-                               choiceNames = choiceNames
-            )
-          )
-        )
-      )
-    )
-    
-    
-  }
-  
-  filterDiv <- function(...){
-    div(..., class = "filtertext")
-  }
-  
-  
   
   # filter inputs for UI -----
   
     output$studyFilters <- renderUI({
       tagList(
-        div(class = "filter-dropdown",
-            .createFilter("species", "Species is"),
+        div(
+            .createFilter("species", "Species is", data),
             filterDiv("AND"),
-            .createFilter("study_type", "Study type is"),
+            .createFilter("study_type", "Study type is", data),
             filterDiv("AND"),
-            .createFilter("condition", "Disease studied is"),
+            .createFilter("condition", "Disease studied is", data),
             filterDiv("AND"),
-            .createFilter("exposure_material", "Vaccine studied is"),
+            .createFilter("exposure_material", "Vaccine studied is", data),
             div()
             )
         
@@ -133,11 +72,11 @@ function(input, output, session) {
     output$subjectFilters <- renderUI({
       tagList(
         div(class="filter-dropdown",
-            .createFilter("gender", "Gender is any of"),
+            .createFilter("gender", "Gender is any of", data),
             filterDiv("AND"),
-            .createFilter("race","Race is any of"),
+            .createFilter("race","Race is any of", data),
             filterDiv("AND"),
-            .createFilter("age", "Age is any of"),
+            .createFilter("age", "Age is any of", data),
             div()
             )
         
@@ -147,11 +86,11 @@ function(input, output, session) {
       anyallDropdown <- "<select><option>any of</option><option>all of</option></select>"
       tagList(
         div(class="filter-dropdown",
-            .createFilter("assay", paste0(anyallDropdown, "these assays")),
+            .createFilter("assay", paste0(anyallDropdown, "these assays"), data),
             filterDiv("AND"),
-            .createFilter("sample_type", paste0(anyallDropdown, "these cell types")),
+            .createFilter("sample_type", paste0(anyallDropdown, "these cell types"), data),
             filterDiv("AT"),
-            .createFilter("timepoint", paste0(anyallDropdown, "these study days")),
+            .createFilter("timepoint", paste0(anyallDropdown, "these study days"), data),
             div()
             )
       )
