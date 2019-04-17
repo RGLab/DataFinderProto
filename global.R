@@ -4,12 +4,12 @@ uiOption <- 2
 # Load libraries
 library(shiny)
 library(shinyjs)
-library(bsplus)
+# library(bsplus)
 library(ImmuneSpaceR)
 library(Rlabkey)
 library(ggplot2)
 library(data.table)
-library(UpSetR)
+# library(UpSetR)
 
 # Set up cache
 # Be sure to wipe cache if plotting function changes

@@ -187,10 +187,14 @@ function(input, output, session) {
     tagList <- lapply(studies, createStudyCard, reactiveData(), output)
     tagList(tagList)
   })
+    # output$studyCardLegend <- renderUI({
+    #   studyCardLegend(output)
+    # })
 
   
   # Plots for visualization panel ----------
-  # Use helper plotting functions
+    # Use helper plotting functions
+    
   output$summaryText <- renderText({
     paste0(
       "Showing data from ",
@@ -202,6 +206,8 @@ function(input, output, session) {
       " studies."
     )
   })
+    
+    output$studyCount <- renderText(length(unique(reactiveData()$study)))
   
   output$dim <- renderText({
     paste(

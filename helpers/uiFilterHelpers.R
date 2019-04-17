@@ -1,3 +1,4 @@
+# This is the button that you click on to expand the dropright menu
 .filterSelector <- function(buttonText, filterClass) {
   div(class = "dropdown",
       div(class = "btn-group filterselector", role = "group", style = "width:100%",
@@ -15,6 +16,7 @@
   )
 }
 
+# This creates the collapsible checkbox groups
 .createFilter <- function(id, label, data) {
   
   # Get choice values and names in correct order
@@ -46,16 +48,16 @@
           '</button>'
         )
       ),
-      bs_collapse(
-        id = paste0(id, "_collapse"),
-        content = div(
-          id = paste0(id, "_checkboxgroup"),
-          checkboxGroupInput(inputId = id,
-                             label = NULL,
-                             choiceValues = choiceValues,
-                             choiceNames = choiceNames
+      div(class = "collapse",
+          id = paste0(id, "_collapse"),
+          div(
+            id = paste0(id, "_checkboxgroup"),
+            checkboxGroupInput(inputId = id,
+                               label = NULL,
+                               choiceValues = choiceValues,
+                               choiceNames = choiceNames
+            )
           )
-        )
       )
     )
   )
@@ -63,6 +65,7 @@
   
 }
 
+# This is just a wrapper for styling other text within the filter dropdown menu
 filterDiv <- function(...){
   div(..., class = "filtertext")
 }

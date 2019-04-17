@@ -27,14 +27,15 @@ fluidPage(
       
       tags$button(class = "btn btn-default", 
                   "Save Participant Group"),
-      div(
-        span("Filters", style="font-size:2.5em;"),
-        div(style="display:inline-block;",
-            actionButton("clear_input", "Clear All"))
-      )
-      ,
-      p("Include data from... "),
-      
+      div(style="margin-top:10px;",
+        span("Filters", style="font-size:2.5em"),
+        span(style="float:right;margin-top:10px;",
+             actionButton("clear_input", "Clear All"))
+        
+      ),
+      div(style="margin-bottom:10px;margin-top:10px;",
+          span("Include data from... ")
+          ),
       # Build query
       div(
         .filterSelector("Studies where", "study"),
@@ -53,6 +54,14 @@ fluidPage(
     mainPanel(
       tabsetPanel(
         tabPanel("Studies",
+                 div(
+                   style="float:right;",
+                   p("Number of Samples"),
+                   studyCardLegend
+                 ),
+                 p(textOutput("studyCount", inline = TRUE), "studies"),
+                 p("Timepoint-assay plots show which timepoints have assay data, where color ",
+                   "corresponds to number of samples."),
                  uiOutput("studyCards")
                  ),
         tabPanel("Participants",
