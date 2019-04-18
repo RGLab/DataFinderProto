@@ -36,6 +36,9 @@ fluidPage(
       div(style="margin-bottom:10px;margin-top:10px;",
           span("Include data from... ")
           ),
+      div(
+        tags$input(type = "text", placeholder = "Search...", name = "search")
+      ),
       # Build query
       div(
         .filterSelector("Studies where", "study"),
@@ -53,17 +56,6 @@ fluidPage(
     # RHS (visualizations) -------------
     mainPanel(
       tabsetPanel(
-        tabPanel("Studies",
-                 div(
-                   style="float:right;",
-                   p("Number of Samples"),
-                   studyCardLegend
-                 ),
-                 p(textOutput("studyCount", inline = TRUE), "studies"),
-                 p("Timepoint-assay plots show which timepoints have assay data, where color ",
-                   "corresponds to number of samples."),
-                 uiOutput("studyCards")
-                 ),
         tabPanel("Participants",
                  textOutput("summaryText"),
                  div(plotOutput("genderBarplot", height = "100%"), class = "barplot"),
@@ -73,7 +65,20 @@ fluidPage(
                  div(plotOutput("timepointHeatmap_sample", height = "200px")),
                  # div(plotOutput("upsetPlot", height = "300px")),
                  div()
-                 )
+                 ),
+        tabPanel("Studies",
+                 div(
+                   style="float:right;",
+                   p("Number of Samples"),
+                   div( style = "",
+                        studyCardLegend
+                   )
+                 ),
+                 p(textOutput("studyCount", inline = TRUE), "studies"),
+                 p("Timepoint-assay plots show which timepoints have assay data, where color ",
+                   "corresponds to number of samples."),
+                 uiOutput("studyCards")
+        )
       )
       
       
