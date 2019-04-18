@@ -83,14 +83,19 @@ function(input, output, session) {
       )
     })
     output$sampleFilters <- renderUI({
-      anyallDropdown <- "<select><option>any of</option><option>all of</option></select>"
+      anyallDropdown <- function(id) {
+        span(class = "form-group shiny-input-container", style = "width:6em;",
+             tags$select(id = id,
+                    tags$option(value = "OR", "any of"),
+                    tags$option(value = "AND", "all of")))
+      }
       tagList(
         div(class="filter-dropdown",
-            .createFilter("assay", paste0(anyallDropdown, "these assays"), data),
+            .createFilter("assay", span(anyallDropdown("assay_operator"), "these assays"), data),
             filterDiv("AND"),
-            .createFilter("sample_type", paste0(anyallDropdown, "these cell types"), data),
+            .createFilter("sample_type", span(anyallDropdown("sample_type_operator"), "these cell types"), data),
             filterDiv("AT"),
-            .createFilter("timepoint", paste0(anyallDropdown, "these study days"), data),
+            .createFilter("timepoint", span(anyallDropdown("timepoint_operator"), "these study days"), data),
             div()
             )
       )
@@ -162,7 +167,8 @@ function(input, output, session) {
           if (length(i[[x]]) > 1) {
             sampleList[[x]] <- div(class = "filterindicator sample", 
                                    span(
-                                     x, "is", paste0(i[[x]], collapse = " OR ")
+                                     x, "is", paste0(i[[x]], 
+                                                     collapse = paste0(" ", i[[paste0(x, "_operator")]], " "))
                                    ))
           } else {
             sampleList[[x]] <- div(class = "filterindicator sample", 

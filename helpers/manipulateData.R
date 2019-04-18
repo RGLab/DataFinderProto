@@ -87,7 +87,6 @@ getData <- function(baseUrl = "https://www.immunespace.org",
 
 filterData <- function(data,
                        filters = list()) {
-  
   # adv-r.had.co.nz/Computing-on-the-language.html
   # http://adv-r.had.co.nz/Expressions.html
   
