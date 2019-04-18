@@ -114,73 +114,26 @@ function(input, output, session) {
       
     })
     
+    # Clear individual filter action -----
+    
+    
     # Filter indicators -----
-    output$studyIndicators <- renderUI({
-      i <- reactiveValuesToList(input)
-      studyList <- list()
-      for (x in c("exposure_material", "study_type", "condition", "species")) {
-        if (!is.null(i[[x]])) {
-          if (length(i[[x]]) > 1) {
-            studyList[[x]] <- div(class = "filterindicator study",
-                                  span(
-                                    x, "is", paste0(i[[x]], collapse = " OR ")
-                                  ))
-          } else {
-            studyList[[x]] <- div(class = "filterindicator study", 
-                                  span(
-                                    x, "is", i[[x]]
-                                  ))
-          }
-          
-        }
-      }
-      studyList
-    })
+    output$studyIndicators <- createSampleIndicators(session,
+                                                     input,
+                                                     options = c("exposure_material", "study_type", "condition", "species"), 
+                                                     class = "study btn")
+      
     
-    output$subjectIndicators <- renderUI({
-      i <- reactiveValuesToList(input)
-      participantList <- list()
-      for (x in c("gender", "race", "age")) {
-        if (!is.null(i[[x]])) {
-          if (length(i[[x]]) > 1) {
-            participantList[[x]] <- div(class = "filterindicator participant", 
-                                        span(
-                                          x, "is", paste0(i[[x]], collapse = " OR ")
-                                        ))
-          } else {
-            participantList[[x]] <- div(class = "filterindicator participant", 
-                                        span(
-                                          x, "is", i[[x]]
-                                        ))
-          }
-          
-        }
-      }
-      participantList
-    })
+    output$subjectIndicators <- createSampleIndicators(session,
+                                                       input,
+                                                       options = c("gender", "race", "age"),
+                                                       class = "participant btn")
+      
     
-    output$sampleIndicators <- renderUI({
-      i <- reactiveValuesToList(input)
-      sampleList <- list()
-      for (x in c("assay", "sample_type", "timepoint")) {
-        if (!is.null(i[[x]])) {
-          if (length(i[[x]]) > 1) {
-            sampleList[[x]] <- div(class = "filterindicator sample", 
-                                   span(
-                                     x, "is", paste0(i[[x]], 
-                                                     collapse = paste0(" ", i[[paste0(x, "_operator")]], " "))
-                                   ))
-          } else {
-            sampleList[[x]] <- div(class = "filterindicator sample", 
-                                   span(
-                                     x, "is", i[[x]]
-                                   ))
-          }
-          
-        }
-      }
-      sampleList
-    })
+    output$sampleIndicators <- createSampleIndicators(session,
+                                                      input,
+                                                      options = c("assay", "sample_type", "timepoint"),
+                                                      class = "sample")
     
       
   

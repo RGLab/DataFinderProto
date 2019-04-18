@@ -50,3 +50,8 @@
 .filterindicator.sample {
   background:#08519C;
 }
+
+.btn {
+    white-space:normal !important;
+    word-wrap: break-word; 
+}

@@ -65,6 +65,50 @@
   
 }
 
+
+# This creates the "filter indicators
+createSampleIndicators <- function(session,
+                                   input, 
+                                   options, 
+                                   class) {
+  # Add listeners 
+  for (x in options) {
+    onclick(paste0(x, "_indicator"),
+            updateCheckboxGroupInput(session,
+                                     x,
+                                     selected = character(0)))
+  }
+  
+  # Create ui elements
+  renderUI({
+    i <- reactiveValuesToList(input)
+    indicatorList <- list()
+    for (x in options) {
+      operator <- ifelse(paste0(x, "_operator") %in% names(i), i[[paste0(x, "_operator")]], "OR")
+      if (!is.null(i[[x]])) {
+        if (length(i[[x]]) > 1) {
+          indicatorList[[x]] <- tags$button(id = paste0(x, "_indicator"),
+            class = paste0("filterindicator ", class), 
+                                 span(x, 
+                                      "is", 
+                                      "\"",
+                                      paste0(i[[x]], 
+                                             collapse = paste0("\" ", operator, " \"")),
+                                      "\""))
+        } else {
+          indicatorList[[x]] <- tags$button(id = paste0(x, "_indicator"),
+                                    class = paste0("filterindicator ", class), 
+                                 span(
+                                   x, "is", "\"", i[[x]], "\""
+                                 ))
+        }
+        
+      }
+    }
+    indicatorList
+  })
+}
+
 # This is just a wrapper for styling other text within the filter dropdown menu
 filterDiv <- function(...){
   div(..., class = "filtertext")
