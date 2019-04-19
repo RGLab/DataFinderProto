@@ -53,5 +53,8 @@
   background:#08519C;
 }
 
-    
+/* ---------- study cards -----------*/
+.card-text {
+  font-size:0.9em;
+  margin: 0 15px 0 15px;
 }

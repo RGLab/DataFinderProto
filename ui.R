@@ -11,6 +11,7 @@ fluidPage(
   
   tags$head(
     tags$link(rel = "stylesheet", type = "text/css", href = "styles.css"),
+    # Hack to prevent dropdowns from collapsing when you click on it
     tags$script(HTML("$(document).on('click', '.dropdown-menu', function (e) {
   e.stopPropagation();
 });"))
@@ -61,7 +62,8 @@ fluidPage(
                  div(plotOutput("genderBarplot", height = "100%"), class = "barplot"),
                  div(plotOutput("ageBarplot", height = "100%"), class = "barplot"),
                  div(plotOutput("raceBarplot", height = "100%"), class = "barplot"),
-                 div(plotOutput("timepointHeatmap_study",  height = "200px")),
+                 div(plotOutput("timepointHeatmap_study",  height = "200px", click = "studyHeatmapClick")),
+                 # verbatimTextOutput("studyHeatmapInfo"),
                  div(plotOutput("timepointHeatmap_sample", height = "200px")),
                  # div(plotOutput("upsetPlot", height = "300px")),
                  div()

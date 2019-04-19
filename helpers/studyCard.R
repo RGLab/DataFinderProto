@@ -37,12 +37,16 @@ createStudyCard <- function(studyName, data, output) {
     span(studyName, style = "font-size:1.2em;"),
     span("Helen Miller", style = "float:right;font-size:1.2em"),  # Study PI
     tags$hr(style="margin-top:5px;margin-bottom:10px;"),
-    p(em(participantCount, " participants")),
-    p(paste0("Exposure material: ", exposureMaterial)),
-    p(paste0("Condition: ", condition)),
-    p(paste0("Sample Type: ", sampleType)),
-    p(paste0("Assays: ", assays)),
-    p(outputPlot),
+    span("Title of the study", style = "text-align:center;font-weight:bold;font-size:1.1em;"),
+    div(
+      p(em(participantCount, " participants")),
+      p(span("Exposure material: ", style = "font-weight:bold;"), exposureMaterial, class = "card-text"),
+      p(span("Condition: ", style = "font-weight:bold;"), condition, class = "card-text"),
+      p(span("Sample Type: ", style = "font-weight:bold;"), sampleType, class = "card-text"),
+      p(span("Assays: ", style = "font-weight:bold;"), assays, class = "card-text"),
+      style = "font-size:0.9em;"
+    ),
+    outputPlot,
     div()
   )
 }

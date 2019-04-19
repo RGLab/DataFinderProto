@@ -224,6 +224,11 @@ function(input, output, session) {
   output$timepointHeatmap_study <- renderPlot({
     timepointHeatmap_study(reactiveData())
   })
+  output$studyHeatmapInfo <- renderText ({
+    paste0("x=", input$studyHeatmapClick$x, "\ny=", input$studyHeatmapClick$y)
+  })
+  # div(plotOutput("timepointHeatmap_study",  height = "200px", click = "studyHeatmapClick")),
+  # verbatimTextOutput("studyHeatmapInfo"),
   
   output$upsetPlot <- renderPlot({
     upsetPlot(reactiveData())
