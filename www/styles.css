@@ -31,14 +31,14 @@
 /*----------- filter indicators -----------*/
 
 .filterindicator {
-  display:inline-block;
   border-radius:10px;
   color:white;
-  padding-right:8px;
-  padding-left:8px;
   margin:2px;
   white-space:normal !important;
   word-wrap: break-word; 
+  padding: 0px;
+  padding-left: 5px;
+  text-align: left;
 }
 
 .filterindicator.study {
@@ -53,6 +53,22 @@
   background:#08519C;
 }
 
+.filterdeletor {
+  background: #e57282;
+  color:white;
+  padding-left:5px;
+  padding-right:5px;
+  float:right;
+  margin:0;
+  height:100%;
+  border-radius:10px;
+}
+
+.filterdeletor:hover {
+  font-weight:bold;
+  text-decoration:none;
+  color:white;
+}
 /* ---------- study cards -----------*/
 .card-text {
   font-size:0.9em;

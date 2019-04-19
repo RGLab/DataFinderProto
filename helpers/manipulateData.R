@@ -138,7 +138,6 @@ filterData <- function(data,
       fullFilterText = paste0(fullFilterText, " & ", .createExprText(filter, filters[[filter]]))
     }
   }
-  print(fullFilterText)
   filteredData <- data[eval(parse(text = fullFilterText))]
   
   # Add filters for sample-level filters
@@ -154,7 +153,6 @@ filterData <- function(data,
     }
   }
   fullSampleFilterText <- paste0("if (", sampleFilterText, ") .SD")
-  print(fullSampleFilterText)
   filteredData <- filteredData[, eval(parse(text = fullSampleFilterText)), subjectid]
   
 }

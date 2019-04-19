@@ -126,13 +126,22 @@ function(input, output, session) {
     output$studyIndicators <- createSampleIndicators(session,
                                                      input,
                                                      options = c("exposure_material", "study_type", "condition", "species"), 
-                                                     class = "study btn")
-      
+                                                     class = "study")
+    # # Listeners
+    # onclick("species_indicator",
+    #         updateCheckboxGroupInput(session, "species", selected = character(0)))
+    # onclick("condition_indicator",
+    #         updateCheckboxGroupInput(session, "condition", selected = character(0)))
+    # onclick("study_type_indicator",
+    #         updateCheckboxGroupInput(session, "study_type", selected = character(0)))
+    # onclick("exposure_material_indicator",
+    #         updateCheckboxGroupInput(session, "exposure_material", selected = character(0)))
     
     output$subjectIndicators <- createSampleIndicators(session,
                                                        input,
                                                        options = c("gender", "race", "age"),
-                                                       class = "participant btn")
+                                                       class = "participant")
+    
       
     
     output$sampleIndicators <- createSampleIndicators(session,
@@ -140,6 +149,12 @@ function(input, output, session) {
                                                       options = c("assay", "sample_type", "timepoint"),
                                                       class = "sample")
     
+    # Listeners
+    lapply(c("species", "condition","exposure_material","study_type","gender","race","age","assay","sample_type","timepoint"),
+          function(filter){
+            onclick(paste0(filter, "_deletor"), 
+                    updateCheckboxGroupInput(session, filter, selected = character(0)))
+          })
       
   
   
