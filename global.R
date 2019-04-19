@@ -1,12 +1,12 @@
 # Configurables
-uiOption <- 2
+# uiOption <- 2
 
 # Load libraries
 library(shiny)
 library(shinyjs)
 # library(bsplus)
-library(ImmuneSpaceR)
-library(Rlabkey)
+# library(ImmuneSpaceR)
+# library(Rlabkey)
 library(ggplot2)
 library(data.table)
 # library(UpSetR)

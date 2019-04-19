@@ -25,6 +25,11 @@ function(input, output, session) {
         assay = input$assay,
         sample_type = input$sample_type,
         timepoint = input$timepoint
+      ),
+      list(
+        assay = input$assay_operator,
+        sample_type = input$sample_type_operator,
+        timepoint = input$timepoint_operator
       )
     )
 

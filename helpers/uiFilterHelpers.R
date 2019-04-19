@@ -90,8 +90,7 @@ createSampleIndicators <- function(session,
           indicatorList[[x]] <- tags$button(id = paste0(x, "_indicator"),
             class = paste0("filterindicator ", class), 
                                  span(x, 
-                                      "is", 
-                                      "\"",
+                                      "is \"",
                                       paste0(i[[x]], 
                                              collapse = paste0("\" ", operator, " \"")),
                                       "\""))
@@ -99,7 +98,7 @@ createSampleIndicators <- function(session,
           indicatorList[[x]] <- tags$button(id = paste0(x, "_indicator"),
                                     class = paste0("filterindicator ", class), 
                                  span(
-                                   x, "is", "\"", i[[x]], "\""
+                                   x, "is \"", i[[x]], "\""
                                  ))
         }
         

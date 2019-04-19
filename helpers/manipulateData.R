@@ -1,4 +1,4 @@
-# GetData.R
+# GetData -----
 # This function will pull the relevant data from the labkey server and 
 # get it into the correct format. This dataset will be static within an
 # instance of the app and filters will be applied to it to create the 
@@ -81,38 +81,81 @@ getData <- function(baseUrl = "https://www.immunespace.org",
   
 }
 
-
+# FilterData -----
 # This is a helper function which filters the ISdataframe based on 
 # user input
 
 filterData <- function(data,
-                       filters = list()) {
+                       filters = list(),
+                       operators = list()) {
+  
   # adv-r.had.co.nz/Computing-on-the-language.html
   # http://adv-r.had.co.nz/Expressions.html
   
   # helper
-  .createExprText = function(filterName, filterValue) {
+  .createExprText = function(filterName, filterValue, operator = NULL) {
     
-    
-    if (!is.null(filterValue)) {
-      filter <- paste0(eval(filterName),  " %in% ", paste0(deparse(eval(filterValue)), collapse = ""))
-    } else {
-      filter <- "TRUE"
+    if (!is.null(operator)) {
+      
+      # sample-level filters
+      if (!is.null(filterValue)) {
+        # NOTE:  Need to collapse deparse statement because it splits it into multiple lines
+        # when it is very long
+        filter <- paste0(operator, "(", paste0(deparse(eval(filterValue)), collapse = "") , " %in% ", filterName, ")")
+      } else {
+        filter <- "TRUE"
+      } 
+      
+    } else {    
+      
+      # Study and participant-level filters
+      if (!is.null(filterValue)) {
+        filter <- paste0(filterName,  " %in% ", paste0(deparse(eval(filterValue)), collapse = "") )
+      } else {
+        filter <- "TRUE"
+      }
     }
+
     
     return(substitute(filter))
   }
   
+  .operatorToFunction <- function(operator) {
+    if(length(operator) == 0) return("any")
+    if(operator == "OR") return("any")
+    if(operator == "AND") return("all")
+    return(operator)
+  }
+  
   fullFilterText = character(0)
-  for (filter in names(filters)) {
+  # Add filters for non-sample-level filters
+  # to create eg
+  # data[species %in% "Homo Sapiens" & age %in% c("61-70", ">70")]
+  for (filter in setdiff(names(filters), c("assay", "sample_type", "timepoint")) ) {
     if (length(fullFilterText) == 0)  {
       fullFilterText <- .createExprText(filter, filters[[filter]])
     } else {
       fullFilterText = paste0(fullFilterText, " & ", .createExprText(filter, filters[[filter]]))
     }
   }
-  
+  print(fullFilterText)
   filteredData <- data[eval(parse(text = fullFilterText))]
+  
+  # Add filters for sample-level filters
+  # to create eg
+  # data[, if (all(c("0", "7") %in% timepoint) & any(c("Gene Expression", "HAI") %in% assay)) .SD, subjectid]
+  sampleFilterText <- character(0)
+  for (filter in intersect(names(filters), c("assay", "sample_type", "timepoint")) ) {
+    if (length(sampleFilterText) == 0) {
+      sampleFilterText <- .createExprText(filter, filters[[filter]], .operatorToFunction(operators[[filter]]) )
+    } else {
+      sampleFilterText <- paste0(sampleFilterText, " & ", 
+                                 .createExprText(filter, filters[[filter]], .operatorToFunction(operators[[filter]]) ))
+    }
+  }
+  fullSampleFilterText <- paste0("if (", sampleFilterText, ") .SD")
+  print(fullSampleFilterText)
+  filteredData <- filteredData[, eval(parse(text = fullSampleFilterText)), subjectid]
   
 }
 
