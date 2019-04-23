@@ -4,6 +4,9 @@
 # filters affect composition of assay data available, and the composition of
 # studies and participants available.
 
+# NOTE:  Shiny uses bootstrap v3 https://getbootstrap.com/docs/3.3/components/
+
+library(shinythemes)
 
 # Define UI 
 fluidPage(
@@ -18,7 +21,7 @@ fluidPage(
   ),
   
   # title ------------------------------
-  titlePanel("Data Finder (v1.4.3)"),
+  titlePanel("Data Finder (v2.0.0)"),
   
   # Main -------------------------------
   sidebarLayout(

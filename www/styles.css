@@ -30,32 +30,43 @@
 
 /*----------- filter indicators -----------*/
 
-.filterindicator {
+.filter-indicator {
+  width:100%;
   border-radius:10px;
   color:white;
   margin:2px;
   white-space:normal !important;
   word-wrap: break-word; 
-  padding: 0px;
-  padding-left: 5px;
+  padding: 0;
   text-align: left;
 }
 
-.filterindicator.study {
+.filter-indicator-text {
+  width: 90%;
+  float: left;
+  padding-left:5px;
+}
+
+.filter-indicator-text.study {
   background:#006D2C;
 }
 
-.filterindicator.participant {
+.filter-indicator-text.participant {
   background:#54278F;
 }
 
-.filterindicator.sample {
+.filter-indicator-text.sample {
   background:#08519C;
 }
 
 .filterdeletor {
+  width:10%;
+  float:right;
   background: #e57282;
   color:white;
+  padding-top: 2px;
+  padding-bottom: 2px;
+  border: 0;
   padding-left:5px;
   padding-right:5px;
   float:right;

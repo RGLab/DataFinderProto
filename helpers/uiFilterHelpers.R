@@ -79,30 +79,31 @@ createSampleIndicators <- function(session,
       operator <- ifelse(paste0(x, "_operator") %in% names(i), i[[paste0(x, "_operator")]], "OR")
       if (!is.null(i[[x]])) {
         if (length(i[[x]]) > 1) {
-          indicatorList[[x]] <- div(
-            id = paste0(x, "_indicator"),
-            class = paste0("filterindicator ", class), 
-            span(x, 
-                 "is \"",
-                 paste0(i[[x]], 
-                        collapse = paste0("\" ", operator, " \"")),
-                 "\""),
-            a(HTML("X"), href = "#",
-              id = paste0(x, "_deletor"),
-              class = "filterdeletor"))
+          indicatorText <- paste0(x, 
+                         "is \"",
+                         paste0(i[[x]], 
+                                collapse = paste0("\" ", operator, " \"")),
+                         "\"") 
         } else {
-          indicatorList[[x]] <- div(
-            # indicator
-            div(
-              id = paste0(x, "_indicator"),
-              class = paste0("filterindicator ", class), 
-              span(
-                x, "is \"", i[[x]], "\""
-              ),
-              a(HTML("X"), href = "#",
-                id = paste0(x, "_deletor"),
-                class = "filterdeletor")))
+          indicatorText <- paste0(x, " is \"", i[[x]], "\"")
         }
+          
+          # <div class="input-group filter-indicator">
+          #   <div id = "species_indicator" class="filterindicator study">study_type is "longitudinal"</div>
+          #   <button id = "species_deletor" class="input-group-addon filterdeletor">
+          #     <span class = "glyphicon glyphicon-remove"></span>
+          #   </button>
+          # </div>
+        
+        indicatorList[[x]] <- div(class = "input-group filter-indicator",
+                                  div(id = paste0(x, "_indicator"),
+                                      class = paste0("filter-indicator-text ", class),
+                                      indicatorText
+                                  ),
+                                  tags$button(id = paste0(x, "_deletor"),
+                                              class = "input-group-addon filterdeletor",
+                                              span(class = "glyphicon glyphicon-remove"))
+        )
       }
       
       
