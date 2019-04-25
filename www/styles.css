@@ -85,3 +85,8 @@
   font-size:0.9em;
   margin: 0 15px 0 15px;
 }
+
+path.js-line:hover {
+  stroke-width:2px;
+}
+

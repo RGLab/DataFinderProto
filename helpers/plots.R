@@ -20,10 +20,29 @@ studyTypePlot <- function(data) {
   
   # plot data
   ggplot(td, aes(study_type)) +
-    geom_bar() +
-    xlab("Study Type") +
-    ylab("Number of Studies") +
-    theme_IS()
+    geom_bar(fill = "#674EA7") +
+    ggtitle("Study Type") +
+    custom_barplot_theme
+}
+diseaseStudiedPlot <- function(data) {
+  # Transform data so one row per study
+  td <- data[, .(condition = unique(condition)), by = "study"]
+  
+  # plot data
+  ggplot(td, aes(condition)) +
+    geom_bar(fill = "#674EA7") +
+    ggtitle("Disease Studied")+
+    custom_barplot_theme
+}
+speciesPlot <- function(data) {
+  # Transform data so one row per study
+  td <- data[, .(species = unique(species)), by = "study"]
+  
+  # plot data
+  ggplot(td, aes(species)) +
+    geom_bar(fill = "#674EA7") +
+    ggtitle("Species") +
+    custom_barplot_theme
 }
 
 genderBarplot <- function(data) {
@@ -97,7 +116,8 @@ timepointHeatmap <- function(td,
                              legendLabels = NULL,
                              legendName = "Number of\nSamples",
                              colorScheme = "Greens",
-                             abbreviateAssayNames = FALSE) {
+                             abbreviateAssayNames = FALSE,
+                             ...) {
   
   timepoints_xaxis <- c("<0", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12",
                         "13", "14", "15-27", "28", "29-55", "56", ">56")
@@ -163,7 +183,7 @@ timepointHeatmap <- function(td,
   # get assay labels, filtered by present assays
   assays <- unique(td$assay)[order(unique(td$assay), decreasing = TRUE)]
   
-  ggplot(d, aes(timepoint, assay)) + 
+  ggplot(d, aes(timepoint, assay, ...)) + 
     geom_tile(aes(fill = colorIndex), color = "white") +
     scale_x_discrete(limits = timepoints_xaxis) +
     scale_y_discrete(limits = assays, labels = assayLabels[assays]) +

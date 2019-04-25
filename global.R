@@ -1,3 +1,9 @@
+##### DataFinder shiny app ###### 
+# This shiny app will serve as a prototype design for an update to the
+# datafinder on the IS UI. It should allow users to easily see how metadata
+# filters affect composition of assay data available, and the composition of
+# studies and participants available.
+
 # Configurables
 # uiOption <- 2
 
@@ -10,6 +16,7 @@ library(shinyjs)
 library(ggplot2)
 library(data.table)
 # library(UpSetR)
+library(plotly)
 
 # Set up cache
 # Be sure to wipe cache if plotting function changes

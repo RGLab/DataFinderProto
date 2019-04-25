@@ -253,6 +253,14 @@ function(input, output, session) {
     studyTypePlot(reactiveData())
   })
   
+  output$diseaseStudiedPlot <- renderPlot({
+    diseaseStudiedPlot(reactiveData())
+  })
+  
+  output$speciesPlot <- renderPlot({
+    speciesPlot(reactiveData())
+  })
+  
   output$genderBarplot <- renderPlot({
     genderBarplot(reactiveData())
   })
@@ -267,5 +275,28 @@ function(input, output, session) {
   
   output$assayBarplot <- renderPlot({
     assayBarplot(reactiveData())
+  })
+  
+  output$interactiveHeatmap <- renderPlotly({
+    d <- formatHeatmapData(reactiveData())
+    custom_timepointHeatmap(d, text = paste0("Number of Participants: ", count))
+  })
+  
+  output$selection <- renderPrint({
+    s <- event_data("plotly_click")
+
+    
+    if (length(s) == 0) {
+      "Click on a cell in the heatmap to display data"
+    } else {
+      tp <- gsub(" Days", "", s$x)
+      as <- s$y
+      rdata <- reactiveData()
+      d <- formatHeatmapData(rdata)
+      d <- d[timepoint == tp & assay == as]
+      cat("You selected:\n\n")
+      cat(paste0(d$count, " participants and ", length(d$studyList[[1]]), " studies:\n"))
+      as.list(d$studyList[[1]])
+    }
   })
 }
