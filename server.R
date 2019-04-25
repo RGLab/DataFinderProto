@@ -55,6 +55,22 @@ function(input, output, session) {
     return(rdata)
   })
   
+  # Load/save buttons
+  observeEvent(input$load, {
+    showModal(modalDialog(
+      title = "Load",
+      "placeholder",
+      easyClose = TRUE
+    ))
+  })
+  
+  observeEvent(input$save, {
+    showModal(modalDialog(
+      title = "Save",
+      "placehoder",
+      easyClose = TRUE
+    ))
+  })
   
   # filter inputs for UI -----
   

@@ -30,8 +30,8 @@ fluidPage(
     sidebarPanel(
       
       span("Participant Group", style = "font-size:1.5em"),
-      tags$button(style = "float:right;", class = "btn btn-default", "Load"),
-      tags$button(style = "float:right;", class = "btn btn-default", "Save"),
+      actionButton("load", "Load", class = "btn btn-default", style = "float:right;"),
+      actionButton("save", "Save", class = "btn btn-default", style = "float:right;"),
       tags$hr(),
       div(style="margin-top:10px;",
         span("Filters", style="font-size:1.5em"),
@@ -43,7 +43,7 @@ fluidPage(
           span("Include data from... ")
           ),
       div(
-        tags$input(type = "text", placeholder = "Search...", name = "search")
+        tags$input(type = "text", placeholder = "Search... (placeholder)", name = "search")
       ),
       # Build query
       div(
@@ -111,15 +111,20 @@ fluidPage(
                  div()
                  ),
         tabPanel("View",
-                 h1("Clinical and Assay Data")),
+                 h1("Clinical and Assay Data"),
+                 p("placeholder")),
         tabPanel("Visualize",
-                 h1("Data Explorer")),
+                 h1("Data Explorer"),
+                 p("placeholder")),
         tabPanel("Cluster",
-                 h1("Dimension Reduction")),
+                 h1("Dimension Reduction"),
+                 p("placeholder")),
         tabPanel("Analyze",
-                 h1("GE Anaylsis modules")),
+                 h1("GE Anaylsis modules"),
+                 p("placeholder")),
         tabPanel("Resources", 
-                 h1("Links to tutorials etc"))
+                 h1("Links to tutorials etc"),
+                 p("placeholder"))
         
         
       )
