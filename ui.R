@@ -87,7 +87,7 @@ fluidPage(
                  h2("Select Assay Data"),
                  p("Assay Data available by timepoint based on current filters", tags$br(),
                    tags$em("Click on a grid box to see details or add that assay-timepoint combination to filters filer")),
-                 div(plotlyOutput(outputId = "interactiveHeatmap", height = "300px")),
+                 div(plotlyOutput(outputId = "interactiveHeatmap", height = "250px")),
                  
                  div()
                  ),

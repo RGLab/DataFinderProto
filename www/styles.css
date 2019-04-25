@@ -2,7 +2,7 @@
 .barplot {
   display:inline-block;
   width:30%;
-  height:200px
+  height:150px
 }
 
 
@@ -48,15 +48,15 @@
 }
 
 .filter-indicator-text.study {
-  background:#006D2C;
-}
-
-.filter-indicator-text.participant {
   background:#54278F;
 }
 
+.filter-indicator-text.participant {
+  background:#6BAED6;
+}
+
 .filter-indicator-text.sample {
-  background:#08519C;
+  background:#238B45;
 }
 
 .filterdeletor {
