@@ -83,7 +83,7 @@ custom_timepointHeatmap <- function(d,
   assays <- unique(d$assay)[order(unique(d$assay), decreasing = TRUE)]
   
   
-  # Create dfs with various 
+  # Create matrices with various relavent data----
   ###
   participantCount <- 
     # Creates a matrix with one column for each timepoint
@@ -118,8 +118,7 @@ custom_timepointHeatmap <- function(d,
         paste0(
           "<em>", as, " at Day ", tp, "</em><br>",
           "Number of Participants: ", d[timepoint == tp & assay == as, count], "<br>",
-          "<em>Studies:</em> <br>", 
-          paste0(unlist(d[timepoint == tp & assay == as, studyList]), collapse = "<br>")
+          "Number of Studies: ", length(d[timepoint == tp & assay == as, studyList][[1]])
                )
       }, FUN.VALUE = "text")
     }, FUN.VALUE = rep("text", length(assays)))

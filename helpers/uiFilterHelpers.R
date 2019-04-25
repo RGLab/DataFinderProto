@@ -67,7 +67,7 @@
 
 
 # This creates the "filter indicators
-createSampleIndicators <- function(session,
+createFilterIndicators <- function(session,
                                    input, 
                                    options, 
                                    class) {

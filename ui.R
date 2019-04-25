@@ -21,7 +21,7 @@ fluidPage(
   ),
   
   # title ------------------------------
-  titlePanel("Data Finder (v2.1)"),
+  titlePanel("Data Finder (v2.2)"),
   
   # Main -------------------------------
   sidebarLayout(
@@ -29,10 +29,12 @@ fluidPage(
     # LHS (filters) --------------------
     sidebarPanel(
       
-      tags$button(class = "btn btn-default", 
-                  "Save Participant Group"),
+      span("Participant Group", style = "font-size:1.5em"),
+      tags$button(style = "float:right;", class = "btn btn-default", "Load"),
+      tags$button(style = "float:right;", class = "btn btn-default", "Save"),
+      tags$hr(),
       div(style="margin-top:10px;",
-        span("Filters", style="font-size:2.5em"),
+        span("Filters", style="font-size:1.5em"),
         span(style="float:right;margin-top:10px;",
              actionButton("clear_input", "Clear All"))
         
@@ -45,13 +47,16 @@ fluidPage(
       ),
       # Build query
       div(
-        .filterSelector("Studies where", "study"),
+        .filterSelector("Study Design", "study"),
         uiOutput("studyIndicators"),
-        .filterSelector("Participants where", "subject"),
+        .filterSelector("Participant Characteristics", "subject"),
         uiOutput("subjectIndicators"),
-        .filterSelector("Participants with data from", "sample"),
+        .filterSelector("Data Available", "sample"),
         uiOutput("sampleIndicators")
-      )
+      ),
+      tags$hr(),
+      h2("Summary"),
+      textOutput("summaryText")
         
         
 
@@ -60,23 +65,37 @@ fluidPage(
     # RHS (visualizations) -------------
     mainPanel(
       tabsetPanel(
-        tabPanel("Participants",
-                 textOutput("summaryText"),
-                 div(plotOutput("genderBarplot", height = "100%"), class = "barplot"),
-                 div(plotOutput("ageBarplot", height = "100%"), class = "barplot"),
-                 div(plotOutput("raceBarplot", height = "100%"), class = "barplot"),
+        tabPanel("Find",
                  
+                 # Study Characteristics
+                 h2("Select Study Characteristics"),
+                 p("Study characteristics available based on current filters", tags$br(),
+                   tags$em("Click on a barplot to see details or add a filter")),
                  div(plotOutput("speciesPlot", height = "100%"), class = "barplot"),
                  div(plotOutput("studyTypePlot", height = "100%"), class = "barplot"),
                  div(plotOutput("diseaseStudiedPlot", height = "100%"), class = "barplot"),
                  
-                 div(plotOutput("timepointHeatmap_study",  height = "200px")),
-                 # verbatimTextOutput("studyHeatmapInfo"),
-                 div(plotOutput("timepointHeatmap_sample", height = "200px")),
-                 # div(plotOutput("upsetPlot", height = "300px")),
+                 # Participant Characteristics
+                 h2("Select Participant Characteristics"),
+                 p("Participant data available based on current filters", tags$br(),
+                   tags$em("Click on a barplot to see details or add a filter")),
+                 div(plotOutput("genderBarplot", height = "100%"), class = "barplot"),
+                 div(plotOutput("ageBarplot", height = "100%"), class = "barplot"),
+                 div(plotOutput("raceBarplot", height = "100%"), class = "barplot"),
+                 
+                 # Assay data
+                 h2("Select Assay Data"),
+                 p("Assay Data available by timepoint based on current filters", tags$br(),
+                   tags$em("Click on a grid box to see details or add that assay-timepoint combination to filters filer")),
+                 div(plotlyOutput(outputId = "interactiveHeatmap", height = "300px")),
+                 
                  div()
                  ),
+        
+        
         tabPanel("Studies",
+                 
+                 # Study cards
                  div(
                    style="float:right;",
                    p("Number of Samples"),
@@ -87,11 +106,22 @@ fluidPage(
                  p(textOutput("studyCount", inline = TRUE), "studies"),
                  p("Timepoint-assay plots show which timepoints have assay data, where color ",
                    "corresponds to number of samples."),
-                 uiOutput("studyCards")
-        ),
-        tabPanel("Interactive",
-                 plotlyOutput(outputId = "interactiveHeatmap", height = "400px"),
-                 verbatimTextOutput("selection"))
+                 uiOutput("studyCards"),
+                 
+                 div()
+                 ),
+        tabPanel("View",
+                 h1("Clinical and Assay Data")),
+        tabPanel("Visualize",
+                 h1("Data Explorer")),
+        tabPanel("Cluster",
+                 h1("Dimension Reduction")),
+        tabPanel("Analyze",
+                 h1("GE Anaylsis modules")),
+        tabPanel("Resources", 
+                 h1("Links to tutorials etc"))
+        
+        
       )
       
       

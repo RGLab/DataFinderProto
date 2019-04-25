@@ -123,7 +123,7 @@ function(input, output, session) {
     
     
     # Filter indicators -----
-    output$studyIndicators <- createSampleIndicators(session,
+    output$studyIndicators <- createFilterIndicators(session,
                                                      input,
                                                      options = c("exposure_material", "study_type", "condition", "species"), 
                                                      class = "study")
@@ -137,14 +137,14 @@ function(input, output, session) {
     # onclick("exposure_material_indicator",
     #         updateCheckboxGroupInput(session, "exposure_material", selected = character(0)))
     
-    output$subjectIndicators <- createSampleIndicators(session,
+    output$subjectIndicators <- createFilterIndicators(session,
                                                        input,
                                                        options = c("gender", "race", "age"),
                                                        class = "participant")
     
       
     
-    output$sampleIndicators <- createSampleIndicators(session,
+    output$sampleIndicators <- createFilterIndicators(session,
                                                       input,
                                                       options = c("assay", "sample_type", "timepoint"),
                                                       class = "sample")
