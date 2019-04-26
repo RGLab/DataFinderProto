@@ -92,7 +92,7 @@ filterData <- function(data,
   # adv-r.had.co.nz/Computing-on-the-language.html
   # http://adv-r.had.co.nz/Expressions.html
   
-  # helper
+  # helpers -----
   .createExprText = function(filterName, filterValue, operator = NULL) {
     
     if (!is.null(operator)) {
@@ -126,6 +126,8 @@ filterData <- function(data,
     if(operator == "AND") return("all")
     return(operator)
   }
+  
+  # Main -----
   
   fullFilterText = character(0)
   # Add filters for non-sample-level filters

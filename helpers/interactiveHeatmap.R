@@ -44,6 +44,7 @@ formatHeatmapData <- function(data) {
   })
   setDT(d)
   setkey(d, timepoint, assay)
+  return(d)
 }
 
 custom_timepointHeatmap <- function(d,
@@ -55,25 +56,7 @@ custom_timepointHeatmap <- function(d,
                                     ...) {
   timepoints_xaxis <- c("<0", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12",
                         "13", "14", "15-27", "28", "29-55", "56", ">56")
-  
-  
-  
-  # Make labels for legend
-  if (is.null(legendLabels)) {
-    
-    legendLabels <- character(length(breaks))
-    for (i in seq_along(legendLabels)) {
-      if (i == 1) {
-        legendLabels[i] <- paste0("  ", "0")
-      } else if (i == length(breaks)) {
-        legendLabels[i] <- paste0(" >",breaks[i-1])
-      } else {
-        legendLabels[i] <- paste0(breaks[i-1] + 1, "-", breaks[i])
-      }
-      
-    }
-    
-  }
+
   
   # Set color
   d$colorIndex <- as.character(.bincode(d$count, breaks = breaks, include.lowest = TRUE) + 1)
@@ -125,11 +108,11 @@ custom_timepointHeatmap <- function(d,
   
   customdata <- 
     vapply(timepoints_xaxis, function(tp) {
-      vapply(assays, function(as) {
-        jsonlite::toJSON(list(participantCount = d[timepoint == tp & assay == as, count],
-             studies = unlist(d[timepoint == tp & assay == as, studyList])))
-      }, FUN.VALUE = "text")
-    }, FUN.VALUE = rep("text", length(assays)))
+      lapply(assays, function(as) {
+        list(participantCount = d[timepoint == tp & assay == as, count],
+             studies = unlist(d[timepoint == tp & assay == as, studyList]))
+      })
+    }, FUN.VALUE = rep(list(list()), length(assays)))
   rownames(customdata) <- assays
   
   ids <-     
@@ -139,7 +122,7 @@ custom_timepointHeatmap <- function(d,
       }, FUN.VALUE = "")
     }, FUN.VALUE = rep("", length(assays)))
     
-  
+  # Create plot -----
   plot_ly(z = colorIndex, 
           # Plotly tries to coerce strings into numbers. Add "days" to force it to stay character
           x = paste0(timepoints_xaxis, " Days"), 
@@ -152,10 +135,10 @@ custom_timepointHeatmap <- function(d,
           ygap = 2,
           showlegend = FALSE,
           showscale = FALSE,
-          key = I(customdata)
+          customdata = ~customdata
           ) 
   
-  # Custom data seems to be a bust :(
+  # Custom data seems to be a bust :\
   
 }
 

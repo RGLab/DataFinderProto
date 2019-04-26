@@ -295,7 +295,19 @@ function(input, output, session) {
   
   output$interactiveHeatmap <- renderPlotly({
     d <- formatHeatmapData(reactiveData())
-    custom_timepointHeatmap(d, text = paste0("Number of Participants: ", count))
+    plotlyHeatmap <- custom_timepointHeatmap(d, text = paste0("Number of Participants: ", count))
+      htmlwidgets::onRender(plotlyHeatmap,
+                            "//javascript
+    // when hovering over an element, give it a thick, white border
+    function(el, x) {
+    el.on('plotly_click', function(d) {
+    console.log(d.points[0]);
+    });
+    }
+
+
+                            "
+      )
   })
   
   output$selection <- renderPrint({
