@@ -20,6 +20,7 @@ rows.selectAll("rect")
   .attr("fill", function(d) { return d.color })
   .attr("d", function(d) { return JSON.stringify(d) }); // Need to add data as an attribute to be accessed by shiny
   
+// Add mouseover action  
 svg.selectAll("rect")
   .on("mouseover", function(d, i) {
     d3.selectAll("text").remove();
@@ -44,6 +45,8 @@ svg.selectAll("rect")
       //.attr("fill", function(d) { return d.color })
       .attr("stroke-width", "0px");
   })
+  
+  // add click action
   .on("click", function(){
     Shiny.setInputValue(
       "heatmap_value",
