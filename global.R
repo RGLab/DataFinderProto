@@ -17,6 +17,7 @@ library(ggplot2)
 library(data.table)
 # library(UpSetR)
 library(plotly)
+library(r2d3)
 
 # Set up cache
 # Be sure to wipe cache if plotting function changes

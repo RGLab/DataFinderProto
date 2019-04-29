@@ -1,3 +1,9 @@
+/* ------------ d3 heatmap ---------*/
+/*
+.heatmap-box:hover {
+  fill: #005377;
+}
+*/
 
 .barplot {
   display:inline-block;
@@ -86,7 +92,6 @@
   margin: 0 15px 0 15px;
 }
 
-path.js-line:hover {
-  stroke-width:2px;
-}
+
+
 

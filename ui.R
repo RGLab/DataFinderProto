@@ -60,38 +60,10 @@ fluidPage(
     # RHS (visualizations) -------------
     mainPanel(
       tabsetPanel(
-        tabPanel("Participants",
-                 textOutput("summaryText"),
-                 div(plotOutput("genderBarplot", height = "100%"), class = "barplot"),
-                 div(plotOutput("ageBarplot", height = "100%"), class = "barplot"),
-                 div(plotOutput("raceBarplot", height = "100%"), class = "barplot"),
-                 
-                 div(plotOutput("speciesPlot", height = "100%"), class = "barplot"),
-                 div(plotOutput("studyTypePlot", height = "100%"), class = "barplot"),
-                 div(plotOutput("diseaseStudiedPlot", height = "100%"), class = "barplot"),
-                 
-                 div(plotOutput("timepointHeatmap_study",  height = "200px")),
-                 # verbatimTextOutput("studyHeatmapInfo"),
-                 div(plotOutput("timepointHeatmap_sample", height = "200px")),
-                 # div(plotOutput("upsetPlot", height = "300px")),
-                 div()
-                 ),
-        tabPanel("Studies",
-                 div(
-                   style="float:right;",
-                   p("Number of Samples"),
-                   div( style = "",
-                        studyCardLegend
-                   )
-                 ),
-                 p(textOutput("studyCount", inline = TRUE), "studies"),
-                 p("Timepoint-assay plots show which timepoints have assay data, where color ",
-                   "corresponds to number of samples."),
-                 uiOutput("studyCards")
-        ),
-        tabPanel("Interactive",
-                 plotlyOutput(outputId = "interactiveHeatmap", height = "400px"),
-                 verbatimTextOutput("selection"))
+       
+        tabPanel("d3",
+                 d3Output(outputId = "d3Heatmap"),
+                 verbatimTextOutput("d3Selection"))
       )
       
       

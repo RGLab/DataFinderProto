@@ -188,115 +188,15 @@ function(input, output, session) {
     
     output$studyCount <- renderText(length(unique(reactiveData()$study)))
   
-  output$dim <- renderText({
-    paste(
-      "dim(data) = ", paste0(dim(reactiveData()), collapse = ","))
-    })
-  
-  output$species <- renderText({
-    paste(
-      "unique(data$species) = ", paste0(unique(reactiveData()$species), collapse = ",")
-    )
-  }) 
-  
-  output$gender <- renderText({
-    paste(
-      "unique(data$gender) = ", paste0(unique(reactiveData()$gender), collapse = ",")
-    )
-  })
-  
-  output$assay <- renderText({
-    paste(
-      "unique(data$assay) = ", paste0(unique(reactiveData()$assay), collapse = ",")
-    )
-  })
-    
-  output$participants <- renderText({
-    paste(
-      length(unique(reactiveData()$subjectid)),
-      " subjects"
-    )
-  })
-  
-  output$Studies <- renderText({
-    paste(
-      length(unique(reactiveData()$study)),
-      " studies"
-    )
-  })
-  
-  output$Samples <- renderText({
-    paste(
-      length(unique(reactiveData()$sampleid)),
-      " samples"
-    )
-  })
-  
-  output$timepointHeatmap_sample <- renderPlot({
-    timepointHeatmap_sample(reactiveData())
-  })
-  
-  output$timepointHeatmap_study <- renderPlot({
-    timepointHeatmap_study(reactiveData())
-  })
-  output$studyHeatmapInfo <- renderText ({
-    paste0("x=", input$studyHeatmapClick$x, "\ny=", input$studyHeatmapClick$y)
-  })
-  # div(plotOutput("timepointHeatmap_study",  height = "200px", click = "studyHeatmapClick")),
-  # verbatimTextOutput("studyHeatmapInfo"),
-  
-  output$upsetPlot <- renderPlot({
-    upsetPlot(reactiveData())
-  })
-  
-  output$studyTypePlot <- renderPlot({
-    studyTypePlot(reactiveData())
-  })
-  
-  output$diseaseStudiedPlot <- renderPlot({
-    diseaseStudiedPlot(reactiveData())
-  })
-  
-  output$speciesPlot <- renderPlot({
-    speciesPlot(reactiveData())
-  })
-  
-  output$genderBarplot <- renderPlot({
-    genderBarplot(reactiveData())
-  })
-  
-  output$ageBarplot <- renderPlot({
-    ageBarplot(reactiveData())
-  })
-  
-  output$raceBarplot <- renderPlot({
-    raceBarplot(reactiveData())
-  })
-  
-  output$assayBarplot <- renderPlot({
-    assayBarplot(reactiveData())
-  })
-  
-  output$interactiveHeatmap <- renderPlotly({
-    d <- formatHeatmapData(reactiveData())
-    custom_timepointHeatmap(d, text = paste0("Number of Participants: ", count))
-  })
-  
-  output$selection <- renderPrint({
-    s <- event_data("plotly_click")
 
-    
-    if (length(s) == 0) {
-      "Click on a cell in the heatmap to display data"
+  output$d3Heatmap <- renderD3({
+    d3Heatmap(reactiveData())
+  })
+  output$d3Selection <- renderPrint({
+    if (!is.null(input$heatmap_value)) {
+      jsonlite::fromJSON(input$heatmap_value) 
     } else {
-      tp <- gsub(" Days", "", s$x)
-      as <- s$y
-      rdata <- reactiveData()
-      d <- formatHeatmapData(rdata)
-      d <- d[timepoint == tp & assay == as]
-      cat("You selected:\n\n")
-      cat(paste0(d$count, " participants and ", length(d$studyList[[1]]), " studies:\n"))
-      as.list(d$studyList[[1]])
+      "Click on the heatmap to display data here"
     }
   })
 }
