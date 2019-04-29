@@ -32,12 +32,17 @@ svg.selectAll("rect")
       .attr("x", (i % 21) * barWidth + barWidth)
       .attr("y", Math.floor(i/21) * barHeight + barHeight - 20)
       .text(function(){return d.participantCount + " participants"});
-    d3.select(this).attr("fill", "#005377");
+    d3.select(this)
+      //.attr("fill", "#005377")
+      .attr("stroke-width", "3px")
+      .attr("stroke", "#FFFFFF");
       
   })
   .on("mouseout", function(d) {
     svg.selectAll("text").remove();
-    d3.select(this).attr("fill", function(d) { return d.color })
+    d3.select(this)
+      //.attr("fill", function(d) { return d.color })
+      .attr("stroke-width", "0px");
   })
   .on("click", function(){
     Shiny.setInputValue(
