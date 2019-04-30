@@ -94,28 +94,19 @@ filterData <- function(data,
   
   # helpers -----
   .createExprText = function(filterName, filterValue, operator = NULL) {
+    # Creates a text string like
+    # [1] "any(c(\"0-10\", \"11-20\") %in% age)"
     
-    if (!is.null(operator)) {
-      
-      # sample-level filters
-      if (!is.null(filterValue)) {
-        # NOTE:  Need to collapse deparse statement because it splits it into multiple lines
-        # when it is very long
-        filter <- paste0(operator, "(", paste0(deparse(eval(filterValue)), collapse = "") , " %in% ", filterName, ")")
-      } else {
-        filter <- "TRUE"
-      } 
-      
-    } else {    
-      
-      # Study and participant-level filters
-      if (!is.null(filterValue)) {
-        filter <- paste0(filterName,  " %in% ", paste0(deparse(eval(filterValue)), collapse = "") )
-      } else {
-        filter <- "TRUE"
-      }
-    }
-
+    operator <- .operatorToFunction(operator)
+    
+    # sample-level filters
+    if (!is.null(filterValue)) {
+      # NOTE:  Need to collapse deparse statement because it splits it into multiple lines
+      # when it is very long
+      filter <- paste0(operator, "(", paste0(deparse(eval(filterValue)), collapse = "") , " %in% ", filterName, ")")
+    } else {
+      filter <- "TRUE"
+    } 
     
     return(substitute(filter))
   }
@@ -128,34 +119,27 @@ filterData <- function(data,
   }
   
   # Main -----
+  # Everything will be grouped by subjectid
+  # Want a filter like: 
+  # data[,
+  #      if (all(c("0", "7") %in% timepoint) &
+  #          any(c("Gene Expression", "HAI") %in% assay) &
+  #          any(c("0-10", "11-20") %in% age)) {
+  #        .SD
+  #      },
+  #      subjectid]
   
-  fullFilterText = character(0)
-  # Add filters for non-sample-level filters
-  # to create eg
-  # data[species %in% "Homo Sapiens" & age %in% c("61-70", ">70")]
-  for (filter in setdiff(names(filters), c("assay", "sample_type", "timepoint")) ) {
-    if (length(fullFilterText) == 0)  {
-      fullFilterText <- .createExprText(filter, filters[[filter]])
-    } else {
-      fullFilterText = paste0(fullFilterText, " & ", .createExprText(filter, filters[[filter]]))
-    }
-  }
-  filteredData <- data[eval(parse(text = fullFilterText))]
+  # Paste all filters together
+  filterList <- mapply(.createExprText, 
+                       filterName = names(filters),
+                       filterValue = filters,
+                       operator = operators[names(filters)],
+                       SIMPLIFY = FALSE)
+  filterText <- paste0(filterList, collapse = " & ")
   
-  # Add filters for sample-level filters
-  # to create eg
-  # data[, if (all(c("0", "7") %in% timepoint) & any(c("Gene Expression", "HAI") %in% assay)) .SD, subjectid]
-  sampleFilterText <- character(0)
-  for (filter in intersect(names(filters), c("assay", "sample_type", "timepoint")) ) {
-    if (length(sampleFilterText) == 0) {
-      sampleFilterText <- .createExprText(filter, filters[[filter]], .operatorToFunction(operators[[filter]]) )
-    } else {
-      sampleFilterText <- paste0(sampleFilterText, " & ", 
-                                 .createExprText(filter, filters[[filter]], .operatorToFunction(operators[[filter]]) ))
-    }
-  }
-  fullSampleFilterText <- paste0("if (", sampleFilterText, ") .SD")
-  filteredData <- filteredData[, eval(parse(text = fullSampleFilterText)), subjectid]
+  # Create full expression
+  fullFilterText <- paste0("if (", filterText, ") .SD")
+  filteredData <- data[, eval(parse(text = fullFilterText)), by = "subjectid"]
+  return(filteredData)
   
 }
-
