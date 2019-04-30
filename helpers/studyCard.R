@@ -1,4 +1,6 @@
-createStudyCard <- function(studyName, data, output) {
+createStudyCard <- function(studyName, data, origData, output) {
+  
+  maxParticipants <- length(unique(origData[study == studyName]$subjectid))
   
   studyData <- data[study == studyName]
   participantCount <- length(unique(studyData$subjectid))
@@ -34,12 +36,20 @@ createStudyCard <- function(studyName, data, output) {
       "width: 300px;",
       "display:inline-block;"
     ),
+    tags$input(type = "checkbox", name = paste0(studyName, "_check"), value = paste0(studyName, "_check")),
     span(studyName, style = "font-size:1.2em;"),
     span("Helen Miller", style = "float:right;font-size:1.2em"),  # Study PI
     tags$hr(style="margin-top:5px;margin-bottom:10px;"),
-    span("Title of the study", style = "text-align:center;font-weight:bold;font-size:1.1em;"),
+    div("Title of the study", style = "text-align:left;font-weight:bold;font-size:1.1em;margin-bottom:10px;"),
+    div(class = "progress", style = "margin-bottom:0px;height:10px;",
+        div(class = "progress-bar progress-bar-success", 
+            role = "progressbar", 
+            "aria-valuenow" = participantCount,
+            "aria-valuemin"="0",
+            "aria-valuemax"=as.character(maxParticipants),
+            style = paste0("width:", participantCount/maxParticipants*100, "%"))),
+    p(tags$em(paste0(participantCount, " of ", maxParticipants, " participants selected."))),
     div(
-      p(em(participantCount, " participants")),
       p(span("Exposure material: ", style = "font-weight:bold;"), exposureMaterial, class = "card-text"),
       p(span("Condition: ", style = "font-weight:bold;"), condition, class = "card-text"),
       p(span("Sample Type: ", style = "font-weight:bold;"), sampleType, class = "card-text"),

@@ -15,6 +15,7 @@ function(input, output, session) {
     rdata <- filterData(
       data,
       list(
+        study = input$study,
         species = input$species,
         condition = input$condition,
         exposure_material = input$exposure_material,
@@ -35,8 +36,8 @@ function(input, output, session) {
 
     # Update filter text ----
     mapply(
-      filter = c("species", "condition","exposure_material","study_type","gender","race","age","assay","sample_type","timepoint"),
-      filterClass = c(rep("study", 4), rep("subjectid", 3), rep("sampleid", 3)),
+      filter = c("study", "species", "condition","exposure_material","study_type","gender","race","age","assay","sample_type","timepoint"),
+      filterClass = c(rep("study", 5), rep("subjectid", 3), rep("sampleid", 3)),
     FUN = function(filter, filterClass) {
     # Update summary numbers
       lapply(unique(data[[filter]]), 
@@ -76,14 +77,14 @@ function(input, output, session) {
   
     output$studyFilters <- renderUI({
       tagList(
-        div(
-            .createFilter("species", "Species is", data),
-            filterDiv("AND"),
-            .createFilter("study_type", "Study type is", data),
-            filterDiv("AND"),
-            .createFilter("condition", "Disease studied is", data),
-            filterDiv("AND"),
-            .createFilter("exposure_material", "Vaccine studied is", data),
+        div(.createFilter("study", "Study ID", data),
+            .createFilter("species", "Species", data),
+            # filterDiv("AND"),
+            .createFilter("study_type", "Study type", data),
+            # filterDiv("AND"),
+            .createFilter("condition", "Disease studied", data),
+            # filterDiv("AND"),
+            .createFilter("exposure_material", "Vaccine studied", data),
             div()
             )
         
@@ -93,11 +94,11 @@ function(input, output, session) {
     output$subjectFilters <- renderUI({
       tagList(
         div(class="filter-dropdown",
-            .createFilter("gender", "Gender is any of", data),
-            filterDiv("AND"),
-            .createFilter("race","Race is any of", data),
-            filterDiv("AND"),
-            .createFilter("age", "Age is any of", data),
+            .createFilter("gender", "Gender", data),
+            # filterDiv("AND"),
+            .createFilter("race","Race", data),
+            # filterDiv("AND"),
+            .createFilter("age", "Age", data),
             div()
             )
         
@@ -112,10 +113,11 @@ function(input, output, session) {
       }
       tagList(
         div(class="filter-dropdown",
+            tags$p(tags$em("Use the Assay heatmap in the \"Find\" tab for advanced filtering options.")),
             .createFilter("assay", span(anyallDropdown("assay_operator"), "these assays"), data),
-            filterDiv("AND"),
+            # filterDiv("AND"),
             .createFilter("sample_type", span(anyallDropdown("sample_type_operator"), "these cell types"), data),
-            filterDiv("AT"),
+            # filterDiv("AT"),
             .createFilter("timepoint", span(anyallDropdown("timepoint_operator"), "these study days"), data),
             div()
             )
@@ -141,7 +143,7 @@ function(input, output, session) {
     # Filter indicators -----
     output$studyIndicators <- createFilterIndicators(session,
                                                      input,
-                                                     options = c("exposure_material", "study_type", "condition", "species"), 
+                                                     options = c("study", "exposure_material", "study_type", "condition", "species"), 
                                                      class = "study")
     # # Listeners
     # onclick("species_indicator",
@@ -166,7 +168,7 @@ function(input, output, session) {
                                                       class = "sample")
     
     # Listeners
-    lapply(c("species", "condition","exposure_material","study_type","gender","race","age","assay","sample_type","timepoint"),
+    lapply(c("study", "species", "condition","exposure_material","study_type","gender","race","age","assay","sample_type","timepoint"),
           function(filter){
             onclick(paste0(filter, "_deletor"), 
                     updateCheckboxGroupInput(session, filter, selected = character(0)))
@@ -179,7 +181,7 @@ function(input, output, session) {
     studies <- unique(reactiveData()$study)
     # Sort studies by number
     studies <- paste0("SDY", sort(as.numeric(gsub("SDY", "", studies))))
-    tagList <- lapply(studies, createStudyCard, reactiveData(), output)
+    tagList <- lapply(studies, createStudyCard, reactiveData(), data, output)
     tagList(tagList)
   })
     # output$studyCardLegend <- renderUI({

@@ -80,7 +80,7 @@ createFilterIndicators <- function(session,
       if (!is.null(i[[x]])) {
         if (length(i[[x]]) > 1) {
           indicatorText <- paste0(x, 
-                         "is \"",
+                         " is \"",
                          paste0(i[[x]], 
                                 collapse = paste0("\" ", operator, " \"")),
                          "\"") 

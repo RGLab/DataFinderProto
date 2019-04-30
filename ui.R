@@ -23,7 +23,7 @@ fluidPage(
   ),
   
   # title ------------------------------
-  titlePanel("Data Finder (v2.2)"),
+  titlePanel("Data Finder (v2.3)"),
   
   # Main -------------------------------
   sidebarLayout(
@@ -54,7 +54,8 @@ fluidPage(
         .filterSelector("Participant Characteristics", "subject"),
         uiOutput("subjectIndicators"),
         .filterSelector("Data Available", "sample"),
-        uiOutput("sampleIndicators")
+        uiOutput("sampleIndicators"),
+        div()
       ),
       tags$hr(),
       h2("Summary"),
@@ -112,18 +113,18 @@ fluidPage(
                  
                  div()
                  ),
-        tabPanel("View",
+        tabPanel("Data",
                  h1("Clinical and Assay Data"),
-                 p("placeholder")),
+                 p("View or download data here (placeholder)")),
         tabPanel("Visualize",
                  h1("Data Explorer"),
-                 p("placeholder")),
+                 p("Perform some simple data visualizations here (placeholder)")),
         tabPanel("Cluster",
                  h1("Dimension Reduction"),
-                 p("placeholder")),
+                 p("Use dimension reduction techniques for clustering data here (placeholder)")),
         tabPanel("Analyze",
                  h1("GE Anaylsis modules"),
-                 p("placeholder")),
+                 p("(placeholder)")),
         tabPanel("Resources", 
                  h1("Links to tutorials etc"),
                  p("placeholder"))
