@@ -45,7 +45,7 @@ fluidPage(
           span("Include data from... ")
           ),
       div(
-        tags$input(type = "text", placeholder = "Search... (placeholder)", name = "search")
+        tags$input(type = "text", placeholder = "Search... ", name = "search")
       ),
       # Build query
       div(
