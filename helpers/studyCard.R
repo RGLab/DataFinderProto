@@ -1,4 +1,4 @@
-createStudyCard <- function(studyName, data, origData, output) {
+createStudyCard <- function(studyName, data, origData, output, studyTitle = "Title of the Study") {
   
   maxParticipants <- length(unique(origData[study == studyName]$subjectid))
   
@@ -40,7 +40,7 @@ createStudyCard <- function(studyName, data, origData, output) {
     span(studyName, style = "font-size:1.2em;"),
     span("Helen Miller", style = "float:right;font-size:1.2em"),  # Study PI
     tags$hr(style="margin-top:5px;margin-bottom:10px;"),
-    div("Title of the study", style = "text-align:left;font-weight:bold;font-size:1.1em;margin-bottom:10px;"),
+    div(studyTitle, tags$a(">>", style = "cursor:pointer;"), style = "text-align:left;font-weight:bold;font-size:1.1em;margin-bottom:10px;heigth:2.5em;text-overvlow:elipsis;"),
     div(class = "progress", style = "margin-bottom:0px;height:10px;",
         div(class = "progress-bar progress-bar-success", 
             role = "progressbar", 

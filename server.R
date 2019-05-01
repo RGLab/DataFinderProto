@@ -181,7 +181,7 @@ function(input, output, session) {
     studies <- unique(reactiveData()$study)
     # Sort studies by number
     studies <- paste0("SDY", sort(as.numeric(gsub("SDY", "", studies))))
-    tagList <- lapply(studies, createStudyCard, reactiveData(), data, output)
+    tagList <- lapply(studies, createStudyCard, data = reactiveData(), origData = data, output = output, studyTitle = "Apoptosis and other immune biomarkers predict influenza vac...")
     tagList(tagList)
   })
     # output$studyCardLegend <- renderUI({
