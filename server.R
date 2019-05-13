@@ -75,6 +75,7 @@ function(input, output, session) {
   
   # filter inputs for UI -----
   
+  
     output$studyFilters <- renderUI({
       tagList(
         div(.createFilter("study", "Study ID", data),
@@ -193,14 +194,20 @@ function(input, output, session) {
     # Use helper plotting functions
     
   output$summaryText <- renderText({
+    # paste0(
+    #   "Showing data from ",
+    #   length(unique(reactiveData()$sampleid)),
+    #   " samples from ",
+    #   length(unique(reactiveData()$subjectid)),
+    #   " subjects in ",
+    #   length(unique(reactiveData()$study)),
+    #   " studies."
+    # )
     paste0(
-      "Showing data from ",
-      length(unique(reactiveData()$sampleid)),
-      " samples from ",
       length(unique(reactiveData()$subjectid)),
-      " subjects in ",
+      " participants from ",
       length(unique(reactiveData()$study)),
-      " studies."
+      " studies"
     )
   })
     

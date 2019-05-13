@@ -106,10 +106,14 @@ createFilterIndicators <- function(session,
         )
       }
       
+
       
     }
-    
-    indicatorList
+    if (length(indicatorList) == 0) {
+      tags$em("No filters currently applied")
+    } else {
+      indicatorList
+    }
   })
   
 }
