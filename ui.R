@@ -8,6 +8,7 @@
 
 library(shinythemes)
 
+  
 # Define UI 
 fluidPage(
   shinyjs::useShinyjs(),
@@ -63,7 +64,14 @@ fluidPage(
        
         tabPanel("d3",
                  d3Output(outputId = "d3Heatmap"),
-                 verbatimTextOutput("d3Selection"))
+                 textOutput("selectedText"),
+                 span(class = "form-group shiny-input-container", style = "width:6em;",
+                  tags$select(id = "assay_operator",
+                    tags$option(value = "OR", "OR (any of)"),
+                    tags$option(value = "AND", "AND (all of)"))),
+                 
+                 div()
+                 )
       )
       
       

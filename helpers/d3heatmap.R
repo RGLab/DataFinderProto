@@ -1,4 +1,5 @@
-d3Heatmap <- function(data) {
+d3Heatmap <- function(data,
+                      selected) {
   hmdata <- formatHeatmapData(data)
   
   # Get data in format for d3
@@ -6,8 +7,6 @@ d3Heatmap <- function(data) {
                         "13", "14", "15-27", "28", "29-55", "56", ">56")
   assays <- c("PCR", "Neutralizing Antibody", "MBAA", "HLA Typing", "HAI", "Gene Expression",
               "Flow Cytometry", "ELISPOT", "ELISA", "CyTOF")
-    
-    unique(hmdata$assay)[order(unique(hmdata$assay), decreasing = TRUE)]
   
   
   d <- hmdata
@@ -18,5 +17,6 @@ d3Heatmap <- function(data) {
        options = list(breaks = c(10, 50, 100, 500, 1000),
                       colors = c("#FFFFFF", RColorBrewer::brewer.pal(6, "Greens")),
                       xaxis = timepoints_xaxis,
-                      yaxis = assays))
+                      yaxis = assays,
+                      selected = selected))
 }

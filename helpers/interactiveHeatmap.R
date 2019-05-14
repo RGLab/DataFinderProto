@@ -30,8 +30,11 @@ formatHeatmapData <- function(data) {
   td <- data[!is.na(assay) & timepoint != "Unknown"]
   timepoints_xaxis <- c("<0", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12",
                         "13", "14", "15-27", "28", "29-55", "56", ">56")
+  assays <- c("PCR", "Neutralizing Antibody", "MBAA", "HLA Typing", "HAI", "Gene Expression",
+              "Flow Cytometry", "ELISPOT", "ELISA", "CyTOF")
+  
   # Make sure combinations with zero studies have a row, with count = 0.
-  df <- expand.grid(assay = unique(td$assay), timepoint = timepoints_xaxis, stringsAsFactors = FALSE)
+  df <- expand.grid(assay = assays, timepoint = timepoints_xaxis, stringsAsFactors = FALSE)
   d <- td[, .(studyList = list(unique(study)), 
               participantList = list(unique(subjectid)),
               participantCount = length(unique(subjectid))),
