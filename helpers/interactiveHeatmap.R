@@ -25,25 +25,28 @@ plotlyHeatmap <- function(data) {
 # ---------------------------------------------------------------
 
 formatHeatmapData <- function(data) {
-  td <- data[, .N, c("timepoint", "assay", "study", "subjectid")]
-  td <- td[, .N, c("timepoint", "assay", "study")]
   
   # Remove samples with no assay data
-  td <- td[!is.na(assay) & timepoint != "Unknown"]
+  td <- data[!is.na(assay) & timepoint != "Unknown"]
   timepoints_xaxis <- c("<0", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12",
                         "13", "14", "15-27", "28", "29-55", "56", ">56")
   # Make sure combinations with zero studies have a row, with count = 0.
-  d <- expand.grid(assay = unique(td$assay), timepoint = timepoints_xaxis)
-  d$count <- unlist(apply(d, 1, function(row){
-    tdrow <- which(td$assay == row[1] & td$timepoint == row[2])
-    ifelse(length(tdrow) == 0, 0, sum(td[tdrow]$N))
-  }))
-  d$studyList <- apply(d, 1, function(row) {
-    tdrow <- which(td$assay == row[1] & td$timepoint == row[2])
-    unique(td[tdrow]$study)
-  })
+  df <- expand.grid(assay = unique(td$assay), timepoint = timepoints_xaxis, stringsAsFactors = FALSE)
+  d <- td[, .(studyList = list(unique(study)), 
+              participantList = list(unique(subjectid)),
+              participantCount = length(unique(subjectid))),
+              by = c("timepoint", "assay")]
+
+  
   setDT(d)
   setkey(d, timepoint, assay)
+  setDT(df)
+  setkey(df, timepoint, assay)
+  
+  hmdata <-  merge(df, d, all.x = TRUE, by = c("timepoint", "assay"))
+  hmdata[, participantCount := ifelse(is.na(participantCount), 0, participantCount)]
+  return(hmdata)
+  
 }
 
 custom_timepointHeatmap <- function(d,

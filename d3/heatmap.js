@@ -1,38 +1,57 @@
-var barHeight = Math.floor(height / 10);
-var barWidth = Math.floor(width / 21);
+// inputs from r2d3:
+// * data 
+// * svg
+// * height 
+// * width
+// * options (breaks, colors, xaxis, yaxis)
 
 
-rows = r2d3.svg.selectAll('.row')
-  .data(r2d3.data)
-  .enter().append("g")
-    .attr("class", "row")
-    .attr("transform", function(d, i) {return "translate(0," + i * barHeight + ")";});
+// Create margins 
+var margin = { top: 0, right: 0, bottom: 50, left: 50 },
+    width = width - margin.left - margin.right,
+    height = height - margin.top - margin.bottom;
 
-rows.exit().remove();
-    
-rows.selectAll("rect")
-  .data(function(d) { return d; })
-  .enter().append("rect")
-  .attr("class", "heatmap-box")
-  .attr("x", function(d, i) { return i * barWidth })
-  .attr("width", barWidth)
-  .attr("height", barHeight)
-  .attr("fill", function(d) { return d.color })
-  .attr("d", function(d) { return JSON.stringify(d) }); // Need to add data as an attribute to be accessed by shiny
+var body = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+// Set scales using options
+// color scale
+var colorScale = d3.scaleThreshold()
+  .domain(options.breaks)
+  .range(options.colors);
   
-// Add mouseover action  
-svg.selectAll("rect")
-  .on("mouseover", function(d, i) {
+var xaxisScale = d3.scaleBand()
+  .domain(options.xaxis)
+  .range([0,width]);
+  
+var yaxisScale = d3.scaleBand()
+  .domain(options.yaxis)
+  .range([0,height]);
+
+
+// add data
+boxes = body.selectAll(".box")
+  .data(data)
+  .enter().append("rect")
+  .attr("x", function(d) { return xaxisScale(d.timepoint); })
+  .attr("width", xaxisScale.bandwidth())
+  .attr("y", function(d) { return height - yaxisScale(d.assay); })
+  .attr("height", yaxisScale.bandwidth())
+  .style("fill", function(d) { return colorScale(d.participantCount); });
+  
+boxes.exit().remove();
+
+// mouseover action
+
+boxes.on("mouseover", function(d, i) {
     d3.selectAll("text").remove();
-    var pos = d3.mouse(this);
     svg.append("text")
-      .attr("x", (i % 21) * barWidth + barWidth)
-      .attr("y", Math.floor(i/21) * barHeight + barHeight - 5)
+      .attr("x", xaxisScale(d.timepoint) + xaxisScale.bandwidth() + margin.left )
+      .attr("y", height - yaxisScale(d.assay) + yaxisScale.bandwidth() - 5 )
       .text(function(){return d.assay + " at day " + d.timepoint});
     svg.append("text")
-      .attr("x", (i % 21) * barWidth + barWidth)
-      .attr("y", Math.floor(i/21) * barHeight + barHeight - 20)
-      .text(function(){return d.participantCount + " participants"});
+      .attr("x",  xaxisScale(d.timepoint) + xaxisScale.bandwidth() + margin.left )
+      .attr("y",  height - yaxisScale(d.assay) + yaxisScale.bandwidth() - 20 )
+      .text(function(){ return d.participantCount + " participants"; });
     d3.select(this)
       //.attr("fill", "#005377")
       .attr("stroke-width", "3px")
@@ -46,14 +65,32 @@ svg.selectAll("rect")
       .attr("stroke-width", "0px");
   })
   
-  // add click action
-  .on("click", function(){
+  .on("click", function(d){
     Shiny.setInputValue(
       "heatmap_value",
-      d3.select(this).attr("d"),
+      JSON.stringify(d),
       {priority: "event"}
     );
   });
+
+/*
+rows = svg.selectAll('.row')
+  .data(r2d3.data)
+  .enter().append("g")
+  .attr("class", "row")
+  .attr("transform", function(d, i) { return "translate(0," + i * barHeight + ")"; });
+
+rows.exit().remove();
+    
+rows.selectAll("rect")
+  .data(function(d) { return d; })
+  .enter().append("rect")
+  .attr("class", "heatmap-box")
+  .attr("x", function(d, i) { return i * barWidth })
+  .attr("width", barWidth)
+  .attr("height", barHeight)
+  .attr("fill", function(d) { return d.color });
+  */
 
 
     
