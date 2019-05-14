@@ -4,7 +4,10 @@ d3Heatmap <- function(data) {
   # Get data in format for d3
   timepoints_xaxis <- c("<0", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12",
                         "13", "14", "15-27", "28", "29-55", "56", ">56")
-  assays <- unique(hmdata$assay)[order(unique(hmdata$assay), decreasing = TRUE)]
+  assays <- c("PCR", "Neutralizing Antibody", "MBAA", "HLA Typing", "HAI", "Gene Expression",
+              "Flow Cytometry", "ELISPOT", "ELISA", "CyTOF")
+    
+    unique(hmdata$assay)[order(unique(hmdata$assay), decreasing = TRUE)]
   
   
   d <- hmdata
@@ -15,6 +18,5 @@ d3Heatmap <- function(data) {
        options = list(breaks = c(10, 50, 100, 500, 1000),
                       colors = c("#FFFFFF", RColorBrewer::brewer.pal(6, "Greens")),
                       xaxis = timepoints_xaxis,
-                      yaxis = assays)
-       )
+                      yaxis = assays))
 }
