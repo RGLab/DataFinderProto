@@ -70,6 +70,8 @@ fluidPage(
                     tags$option(value = "OR", "OR (any of)"),
                     tags$option(value = "AND", "AND (all of)"))),
                  
+                 # verbatimTextOutput("d3Selection"),
+                 
                  div()
                  )
       )
