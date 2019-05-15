@@ -302,27 +302,27 @@ function(input, output, session) {
     assayBarplot(reactiveData())
   })
   
-  output$interactiveHeatmap <- renderPlotly({
-    d <- formatHeatmapData(reactiveData())
-    plotlyHeatmap <- custom_timepointHeatmap(d, text = paste0("Number of Participants: ", count))
-      htmlwidgets::onRender(plotlyHeatmap,
-                            "//javascript
-    // when hovering over an element, give it a thick, white border
-    function(el, x) {
-    el.on('plotly_click', function(d) {
-    console.log(d.points[0]);
-    });
-    }
-
-
-                            "
-      )
-  })
+  # output$interactiveHeatmap <- renderPlotly({
+  #   d <- formatHeatmapData(reactiveData())
+  #   plotlyHeatmap <- custom_timepointHeatmap(d, text = paste0("Number of Participants: ", count))
+  #     htmlwidgets::onRender(plotlyHeatmap,
+  #                           "//javascript
+  #   // when hovering over an element, give it a thick, white border
+  #   function(el, x) {
+  #   el.on('plotly_click', function(d) {
+  #   console.log(d.points[0]);
+  #   });
+  #   }
+  # 
+  # 
+  #                           "
+  #     )
+  # })
   
   output$selection <- renderPrint({
     s <- event_data("plotly_click")
 
-    
+
     if (length(s) == 0) {
       "Click on a cell in the heatmap to display data"
     } else {
@@ -335,5 +335,95 @@ function(input, output, session) {
       cat(paste0(d$count, " participants and ", length(d$studyList[[1]]), " studies:\n"))
       as.list(d$studyList[[1]])
     }
+  })
+  
+  ### D3 ---------------
+  heatmapSelection = list()
+  selected = list()
+  selectedParticipants <- character(0)
+  
+  output$interactiveHeatmap <- renderD3({
+    d3Heatmap(reactiveData(),
+              selected)
+  })
+  
+  
+  
+  observeEvent(input$heatmap_value, {
+    
+    # Update Selection
+    
+    if (!is.null(input$heatmap_value)) {
+      heatmap_value <- jsonlite::fromJSON(input$heatmap_value)
+      if (heatmap_value$id %in% selected) {
+        heatmapSelection[[heatmap_value$id]] <<- NULL
+      } else {
+        heatmapSelection[[heatmap_value$id]] <<- heatmap_value$value
+      }
+      selected <<- names(heatmapSelection)
+    }
+    
+    # Get Selected studies and participants
+    operator <- input$assay_operator
+    if (length(heatmapSelection) > 0) {
+      if (length(heatmapSelection) == 1) {
+        participants <- heatmapSelection[[1]]$participantList
+        studies <- heatmapSelection[[1]]$studyList
+      }
+      if (operator == "AND") {
+        participantList <- sapply(heatmapSelection, "[[", "participantList")
+        participants <- Reduce(intersect, participantList)
+        
+        studyList <- sapply(heatmapSelection, "[[", "studyList")
+        studies <- Reduce(intersect, studyList)
+      } else if (operator == "OR") {
+        participantList <- sapply(heatmapSelection, "[[", "participantList")
+        participants <- Reduce(union, participantList)
+        
+        studyList <- sapply(heatmapSelection, "[[", "studyList")
+        studies <- Reduce(union, studyList)
+      }
+    } else {
+      participants <- character(0)
+      studies <- character(0)
+    }
+    
+    output$selectedText <- renderText({
+      selectedAssayTimepoints <- lapply(heatmapSelection, function(x) {
+        paste0(x$assay, " at ", x$timepoint, " Days")
+      })
+      text <- paste0(selectedAssayTimepoints, collapse = paste0(" ", operator, " "))
+      
+      
+      
+      paste0(
+        text, 
+        "(", 
+        length(participants),
+        " participants from ", length(studies), 
+        " studies) ",
+        paste0(studies, collapse = ", "))
+    }
+    )
+    
+    output$d3Selection <- renderPrint({
+      if (!is.null(input$heatmap_value)) {
+        heatmapSelection
+      } else {
+        "Click on the heatmap to display data here"
+      }
+    })
+    
+    
+    output$interactiveHeatmap <- renderD3({
+      d3Heatmap(reactiveData(),
+                selected)
+    })
+    # # Create text
+    # operator <- input$assay_operator
+    # if (operator == "AND") {
+    #   participantList <- Reduce(heatmapSelection$)
+    # }
+    
   })
 }

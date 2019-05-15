@@ -229,7 +229,21 @@ fluidPage(
                                          tags$em("Click on a box in the heatmap to start building a filter")
                                   ),
                                   column(9,
-                                         plotlyOutput(outputId = "interactiveHeatmap", height = "250px")))
+                                         fluidRow(
+                                           d3Output(outputId = "interactiveHeatmap", height = "250px"),
+                                           span(class = "form-group shiny-input-container", style = "width:6em;",
+                                                tags$select(id = "assay_operator",
+                                                            tags$option(value = "OR", "OR (any of)"),
+                                                            tags$option(value = "AND", "AND (all of)"))),
+                                           textOutput("selectedText"),
+                                           div()
+                                           
+                                         )
+                                         ))
+                                
+                                
+                                
+                                
                                 ),
                             
                             div()
