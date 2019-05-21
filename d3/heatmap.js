@@ -23,10 +23,9 @@ var margin = { top: 20, right: 0, bottom: 30, left: 100 },
 
 
 
-// Define the div for the tooltip
-var div = d3.select("body").append("div") 
-    .attr("class", "tooltip")       
-    .style("opacity", 0);
+// // Define the div for the tooltip
+var tooltip = d3.select("#heatmap-label")
+var arrow = d3.select(".arrow-down")
 
 // Set scales using options
 // color scale
@@ -90,20 +89,29 @@ boxes
       .attr("stroke-width", "3px")
       .attr("stroke", "#faff84");
     // Tooltip
-    div.transition()    
-                .duration(100)    
-                .style("opacity", .9);    
-    div.html(d.participantCount + " participants <br>" + d.assay + " at day " + d.timepoint)  
-                .style("right", r + xaxisScale.bandwidth()/2 + "px")   
-                .style("top", (t - yaxisScale.bandwidth() * 2) + "px");  
+    tooltip.transition()
+      .duration(100)
+      .style("opacity", .9);
+    arrow.transition()
+      .duration(100)
+      .style("opacity", .9);
+    arrow
+      .style("right", r - (xaxisScale.bandwidth()/2 - 5) + "px")
+      .style("top", (t - yaxisScale.bandwidth() - 12) + "px");
+    tooltip.html(d.participantCount + " participants <br>" + d.assay + " at day " + d.timepoint)  
+                .style("right", r - xaxisScale.bandwidth()/2 + "px")   
+                .style("top", (t - yaxisScale.bandwidth() - 35 - 12) + "px");  
   })
   .on("mouseout", function(d) {
     // Reset to original 
     d3.select(this)
       .attr("stroke-width", "0px");
-      div.transition()    
-                .duration(100)    
-                .style("opacity", 0); 
+    tooltip.transition()    
+              .duration(100)    
+              .style("opacity", 0); 
+    arrow.transition()
+      .duration(100)
+      .style("opacity", 0);
   })
   
   .on("click", function(d, i){  

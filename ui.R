@@ -342,7 +342,9 @@ fluidPage(
             div()
             
         )
-    )
+    ),
+    div(id = "heatmap-label"),
+    div(class = "arrow-down")
   )
 )
 
