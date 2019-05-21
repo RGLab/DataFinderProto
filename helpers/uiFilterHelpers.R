@@ -118,6 +118,38 @@ createFilterIndicators <- function(session,
   
 }
 
+createSampleFilterIndicators <- function(session,
+                                        appliedFilters) {
+  # Create ui elements
+    indicatorList <- list()
+    for (filter in names(appliedFilters)) {
+      indicatorText <- appliedFilters[[filter]]$text
+        
+        # <div class="input-group filter-indicator">
+        #   <div id = "species_indicator" class="filterindicator study">study_type is "longitudinal"</div>
+        #   <button id = "species_deletor" class="input-group-addon filterdeletor">
+        #     <span class = "glyphicon glyphicon-remove"></span>
+        #   </button>
+        # </div>
+        
+        indicatorList[[filter]] <- div(class = "input-group filter-indicator",
+                                  div(id = paste0(filter, "_indicator"),
+                                      class = paste0("filter-indicator-text ", "sample"),
+                                      indicatorText
+                                  ),
+                                  tags$button(id = paste0(filter, "_deletor"),
+                                              class = "input-group-addon filterdeletor",
+                                              span(class = "glyphicon glyphicon-remove"))
+        )
+      }
+      
+    if (length(indicatorList) == 0) {
+      tags$em("No filters currently applied")
+    } else {
+      indicatorList
+    }
+}
+
 # This is just a wrapper for styling other text within the filter dropdown menu
 filterDiv <- function(...){
   div(..., class = "filtertext")

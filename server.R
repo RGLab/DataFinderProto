@@ -10,8 +10,9 @@ function(input, output, session) {
   # Reactives ---------------------------
     # Filtered dataframe
   # NOTE:  If nothing is checked for checkboxGroupInput, 
-  # the input value is NULL. Otherwise, it is a character vector. 
+  # the input value is NULL. Otherwise, it is a character vector.
   reactiveData <- reactive({
+    
     rdata <- filterData(
       data,
       list(
@@ -24,16 +25,11 @@ function(input, output, session) {
         race = input$race,
         age = input$age,
         assay = input$assay,
-        sample_type = input$sample_type,
         timepoint = input$timepoint
       ),
-      list(
-        assay = input$assay_operator,
-        sample_type = input$sample_type_operator,
-        timepoint = input$timepoint_operator
-      )
+      heatmapSelection$appliedFilters
+      
     )
-
     # Update filter text ----
     mapply(
       filter = c("study", "species", "condition","exposure_material","study_type","gender","race","age","assay","sample_type","timepoint"),
@@ -56,13 +52,40 @@ function(input, output, session) {
     return(rdata)
   })
   
-  # Load/save buttons
+  heatmapSelection <- reactiveValues(
+    data = list(),
+    selectedIds = list(),
+    participants = character(0),
+    selectionText = "",
+    studies = character(0),
+    appliedFilters = list()
+  )
+  
+  
+  # Buttons for all filters
+  
+  ## Clear all ##
+  observeEvent(input$clear_input, {
+    checkboxIds <- c("species", "study_type", "condition", "exposure_material", "gender", 
+                     "race", "age", "assay", "sample_type", "timepoint")
+    lapply(checkboxIds, 
+           function(id) {
+             updateCheckboxGroupInput(session,
+                                      id,
+                                      selected = character(0))
+           })
+    heatmapSelection$appliedFilters <- list()
+    
+  })
+  
+  ## Load/save buttons ##
   observeEvent(input$load, {
     showModal(modalDialog(
       title = "Load",
       "placeholder",
       easyClose = TRUE
     ))
+    
   })
   
   observeEvent(input$save, {
@@ -73,107 +96,214 @@ function(input, output, session) {
     ))
   })
   
-  # filter inputs for UI -----
+  # Study Filter Tab -----
   
+  ## Outputs ##
   
-    output$studyFilters <- renderUI({
-      tagList(
-        div(.createFilter("study", "Study ID", data),
-            .createFilter("species", "Species", data),
-            # filterDiv("AND"),
-            .createFilter("study_type", "Study type", data),
-            # filterDiv("AND"),
-            .createFilter("condition", "Disease studied", data),
-            # filterDiv("AND"),
-            .createFilter("exposure_material", "Vaccine studied", data),
-            div()
-            )
-        
+  output$studyFilters <- renderUI({
+    tagList(
+      div(.createFilter("study", "Study ID", data),
+          .createFilter("species", "Species", data),
+          # filterDiv("AND"),
+          .createFilter("study_type", "Study type", data),
+          # filterDiv("AND"),
+          .createFilter("condition", "Disease studied", data),
+          # filterDiv("AND"),
+          .createFilter("exposure_material", "Vaccine studied", data),
+          div()
       )
-    })
-    
-    output$subjectFilters <- renderUI({
-      tagList(
-        div(class="filter-dropdown",
-            .createFilter("gender", "Gender", data),
-            # filterDiv("AND"),
-            .createFilter("race","Race", data),
-            # filterDiv("AND"),
-            .createFilter("age", "Age", data),
-            div()
-            )
-        
-      )
-    })
-    output$sampleFilters <- renderUI({
-      anyallDropdown <- function(id) {
-        span(class = "form-group shiny-input-container", style = "width:6em;",
-             tags$select(id = id,
-                    tags$option(value = "OR", "any of"),
-                    tags$option(value = "AND", "all of")))
-      }
-      tagList(
-        div(class="filter-dropdown",
-            tags$p(tags$em("Use the Assay heatmap in the \"Find\" tab for advanced filtering options.")),
-            .createFilter("assay", span(anyallDropdown("assay_operator"), "these assays"), data),
-            # filterDiv("AND"),
-            .createFilter("sample_type", span(anyallDropdown("sample_type_operator"), "these cell types"), data),
-            # filterDiv("AT"),
-            .createFilter("timepoint", span(anyallDropdown("timepoint_operator"), "these study days"), data),
-            div()
-            )
-      )
-    })
-    
-    # Clear filter button action -------
-    observeEvent(input$clear_input, {
-      checkboxIds <- c("species", "study_type", "condition", "exposure_material", "gender", 
-                       "race", "age", "assay", "sample_type", "timepoint")
-      lapply(checkboxIds, 
-            function(id) {
-              updateCheckboxGroupInput(session,
-                               id,
-                               selected = character(0))
-            })
       
-    })
-    
-    # Clear individual filter action -----
-    
-    
-    # Filter indicators -----
-    output$studyIndicators <- createFilterIndicators(session,
+    )
+  })
+  
+  output$studyIndicators <- createFilterIndicators(session,
+                                                   input,
+                                                   options = c("study", "exposure_material", "study_type", "condition", "species"), 
+                                                   class = "study")
+  
+  output$studyTypePlot <- renderPlot({
+    studyTypePlot(reactiveData())
+  })
+  
+  output$diseaseStudiedPlot <- renderPlot({
+    diseaseStudiedPlot(reactiveData())
+  })
+  
+  output$speciesPlot <- renderPlot({
+    speciesPlot(reactiveData())
+  })
+  
+  # Participant Filter Tab -----
+  
+  ## Outputs ##
+  
+  
+  output$subjectFilters <- renderUI({
+    tagList(
+      div(class="filter-dropdown",
+          .createFilter("gender", "Gender", data),
+          # filterDiv("AND"),
+          .createFilter("race","Race", data),
+          # filterDiv("AND"),
+          .createFilter("age", "Age", data),
+          div()
+      )
+      
+    )
+  })
+  
+  output$subjectIndicators <- createFilterIndicators(session,
                                                      input,
-                                                     options = c("study", "exposure_material", "study_type", "condition", "species"), 
-                                                     class = "study")
-    # # Listeners
-    # onclick("species_indicator",
-    #         updateCheckboxGroupInput(session, "species", selected = character(0)))
-    # onclick("condition_indicator",
-    #         updateCheckboxGroupInput(session, "condition", selected = character(0)))
-    # onclick("study_type_indicator",
-    #         updateCheckboxGroupInput(session, "study_type", selected = character(0)))
-    # onclick("exposure_material_indicator",
-    #         updateCheckboxGroupInput(session, "exposure_material", selected = character(0)))
+                                                     options = c("gender", "race", "age"),
+                                                     class = "participant")
+  
+  output$genderBarplot <- renderPlot({
+    genderBarplot(reactiveData())
+  })
+  
+  output$ageBarplot <- renderPlot({
+    ageBarplot(reactiveData())
+  })
+  
+  output$raceBarplot <- renderPlot({
+    raceBarplot(reactiveData())
+  })
+  
+  # Sample Filter Tab ----- 
+  
+  ## outputs ##
+  
+  output$interactiveHeatmap <- renderD3({
+    d3Heatmap(reactiveData(),
+              heatmapSelection$selectedIds)
+  })
+  
+  output$selectedText <- renderText({
+    if (length(heatmapSelection$data) > 0) {
+      heatmapSelection$selectionText
+    } else {
+      "Click on a box in the heatmap to start building a filter. "
+    }
+  })
+  
+  output$sampleIndicators <- renderUI({
+    createSampleFilterIndicators(session,
+                                 heatmapSelection$appliedFilters)
+  })
+  
+  output$cellTypeText <- renderText({
+    paste0(input$sample_type, collapse = paste0(" OR "))
+  })
+  
+  ## Listeners ##
+  
+  observeEvent(input$heatmap_value, {
     
-    output$subjectIndicators <- createFilterIndicators(session,
-                                                       input,
-                                                       options = c("gender", "race", "age"),
-                                                       class = "participant")
+    # Update Selection
     
+    if (!is.null(input$heatmap_value)) {
+      heatmap_value <- jsonlite::fromJSON(input$heatmap_value)
+      if (heatmap_value$id %in% heatmapSelection$selectedIds) {
+        heatmapSelection$data[[heatmap_value$id]] <- NULL
+      } else {
+        heatmapSelection$data[[heatmap_value$id]] <- heatmap_value$value
+      }
+      heatmapSelection$selectedIds <- names(heatmapSelection$data)
+    }
+    
+    
+  })
+  
+  # Get selection
+  observeEvent(list(input$heatmap_value, input$assay_operator, input$sample_type), {
+    # Get Selected studies and participants
+    operator <- input$assay_operator
+    if (length(heatmapSelection$data) > 0) {
+    if (length(heatmapSelection$data) == 1) {
+      heatmapSelection$participants <- unique(heatmapSelection$data[[1]]$participantList[1,])
+      heatmapSelection$studies <- unique(heatmapSelection$data[[1]]$studyList)
+    } else if (operator == "AND") {
+      participantMatrixList <- lapply(heatmapSelection$data, "[[", "participantList")
+      participantList <- lapply(participantMatrixList, function(x){
+        if (!is.null(input$sample_type)) {
+          x[1, x[2,] %in% input$sample_type]
+        } else {
+          x[1,]
+        }
+      })
+      heatmapSelection$participants <- Reduce(intersect, participantList)
       
+      studyList <- sapply(heatmapSelection$data, "[[", "studyList")
+      heatmapSelection$studies <- Reduce(intersect, studyList)
+    } else if (operator == "OR") {
+      participantMatrixList <- lapply(heatmapSelection$data, "[[", "participantList")
+      participantList <- lapply(participantMatrixList, function(x){
+        if (!is.null(input$sample_type)) {
+          x[1, x[2,] %in% input$sample_type]
+        } else {
+          x[1,]
+        }
+      })
+      heatmapSelection$participants <- Reduce(union, participantList)
+      studyList <- sapply(heatmapSelection$data, "[[", "studyList")
+      heatmapSelection$studies <- Reduce(union, studyList)
+    }
+    } else {
+      heatmapSelection$participants <- character(0)
+      heatmapSelection$studies <- character(0)
+    }
     
-    output$sampleIndicators <- createFilterIndicators(session,
-                                                      input,
-                                                      options = c("assay", "sample_type", "timepoint"),
-                                                      class = "sample")
+    # Text
+    selectedAssayTimepoints <- lapply(heatmapSelection$data, function(x) {
+      paste0(x$assay, " at ", x$timepoint, " Days")
+    })
     
-    # Listeners
+    text <- paste0(selectedAssayTimepoints, collapse = paste0(" ", operator, " "))
+    
+    if (!is.null(input$sample_type)) {
+      text <- paste0(
+        text,
+        " for ", 
+        paste0(input$sample_type, collapse = " OR ")
+      )
+    }
+    
+    
+    heatmapSelection$selectionText <- text
+  })
+  
+  
+  observeEvent(input$"data-apply", {
+    heatmapSelection$appliedFilters[[paste0("selection", (length(heatmapSelection$appliedFilters) + 1) )]] <- list(
+      participants = heatmapSelection$participants,
+      text = heatmapSelection$selectionText)
+    
+    
+    heatmapSelection$data <- list()
+    heatmapSelection$selectedIds <- list()
+    heatmapSelection$participants <- character(0)
+    heatmapSelection$selectionText <- ""
+    heatmapSelection$studies <- character(0)
+    updateCheckboxGroupInput(session,
+                             "sample_type",
+                             selected = character(0))
+    
+    lapply(names(heatmapSelection$appliedFilters),
+           function(filter){
+             onclick(paste0(filter, "_deletor"),
+                     heatmapSelection$appliedFilters[[filter]] <- NULL)
+           })
+    
+  })
+  
+    
+    # Listeners -----
     lapply(c("study", "species", "condition","exposure_material","study_type","gender","race","age","assay","sample_type","timepoint"),
           function(filter){
             onclick(paste0(filter, "_deletor"), 
                     updateCheckboxGroupInput(session, filter, selected = character(0)))
           })
+
       
   
   
@@ -193,237 +323,170 @@ function(input, output, session) {
   # Plots for visualization panel ----------
     # Use helper plotting functions
     
-  output$summaryText <- renderText({
-    # paste0(
-    #   "Showing data from ",
-    #   length(unique(reactiveData()$sampleid)),
-    #   " samples from ",
-    #   length(unique(reactiveData()$subjectid)),
-    #   " subjects in ",
-    #   length(unique(reactiveData()$study)),
-    #   " studies."
-    # )
-    paste0(
-      length(unique(reactiveData()$subjectid)),
-      " participants from ",
-      length(unique(reactiveData()$study)),
-      " studies"
-    )
-  })
     
-    output$studyCount <- renderText(length(unique(reactiveData()$study)))
-  
-  output$dim <- renderText({
-    paste(
-      "dim(data) = ", paste0(dim(reactiveData()), collapse = ","))
-    })
-  
-  output$species <- renderText({
-    paste(
-      "unique(data$species) = ", paste0(unique(reactiveData()$species), collapse = ",")
-    )
-  }) 
-  
-  output$gender <- renderText({
-    paste(
-      "unique(data$gender) = ", paste0(unique(reactiveData()$gender), collapse = ",")
-    )
-  })
-  
-  output$assay <- renderText({
-    paste(
-      "unique(data$assay) = ", paste0(unique(reactiveData()$assay), collapse = ",")
-    )
-  })
-    
-  output$participants <- renderText({
-    paste(
-      length(unique(reactiveData()$subjectid)),
-      " subjects"
-    )
-  })
-  
-  output$Studies <- renderText({
-    paste(
-      length(unique(reactiveData()$study)),
-      " studies"
-    )
-  })
-  
-  output$Samples <- renderText({
-    paste(
-      length(unique(reactiveData()$sampleid)),
-      " samples"
-    )
-  })
-  
-  output$timepointHeatmap_sample <- renderPlot({
-    timepointHeatmap_sample(reactiveData())
-  })
-  
-  output$timepointHeatmap_study <- renderPlot({
-    timepointHeatmap_study(reactiveData())
-  })
-  output$studyHeatmapInfo <- renderText ({
-    paste0("x=", input$studyHeatmapClick$x, "\ny=", input$studyHeatmapClick$y)
-  })
-  # div(plotOutput("timepointHeatmap_study",  height = "200px", click = "studyHeatmapClick")),
-  # verbatimTextOutput("studyHeatmapInfo"),
-  
-  output$upsetPlot <- renderPlot({
-    upsetPlot(reactiveData())
-  })
-  
-  output$studyTypePlot <- renderPlot({
-    studyTypePlot(reactiveData())
-  })
-  
-  output$diseaseStudiedPlot <- renderPlot({
-    diseaseStudiedPlot(reactiveData())
-  })
-  
-  output$speciesPlot <- renderPlot({
-    speciesPlot(reactiveData())
-  })
-  
-  output$genderBarplot <- renderPlot({
-    genderBarplot(reactiveData())
-  })
-  
-  output$ageBarplot <- renderPlot({
-    ageBarplot(reactiveData())
-  })
-  
-  output$raceBarplot <- renderPlot({
-    raceBarplot(reactiveData())
-  })
-  
-  output$assayBarplot <- renderPlot({
-    assayBarplot(reactiveData())
-  })
-  
-  # output$interactiveHeatmap <- renderPlotly({
-  #   d <- formatHeatmapData(reactiveData())
-  #   plotlyHeatmap <- custom_timepointHeatmap(d, text = paste0("Number of Participants: ", count))
-  #     htmlwidgets::onRender(plotlyHeatmap,
-  #                           "//javascript
-  #   // when hovering over an element, give it a thick, white border
-  #   function(el, x) {
-  #   el.on('plotly_click', function(d) {
-  #   console.log(d.points[0]);
-  #   });
-  #   }
-  # 
-  # 
-  #                           "
-  #     )
-  # })
-  
-  output$selection <- renderPrint({
-    s <- event_data("plotly_click")
-
-
-    if (length(s) == 0) {
-      "Click on a cell in the heatmap to display data"
-    } else {
-      tp <- gsub(" Days", "", s$x)
-      as <- s$y
-      rdata <- reactiveData()
-      d <- formatHeatmapData(rdata)
-      d <- d[timepoint == tp & assay == as]
-      cat("You selected:\n\n")
-      cat(paste0(d$count, " participants and ", length(d$studyList[[1]]), " studies:\n"))
-      as.list(d$studyList[[1]])
-    }
-  })
-  
-  ### D3 ---------------
-  heatmapSelection = list()
-  selected = list()
-  selectedParticipants <- character(0)
-  
-  output$interactiveHeatmap <- renderD3({
-    d3Heatmap(reactiveData(),
-              selected)
-  })
-  
-  
-  
-  observeEvent(input$heatmap_value, {
-    
-    # Update Selection
-    
-    if (!is.null(input$heatmap_value)) {
-      heatmap_value <- jsonlite::fromJSON(input$heatmap_value)
-      if (heatmap_value$id %in% selected) {
-        heatmapSelection[[heatmap_value$id]] <<- NULL
-      } else {
-        heatmapSelection[[heatmap_value$id]] <<- heatmap_value$value
-      }
-      selected <<- names(heatmapSelection)
-    }
-    
-    # Get Selected studies and participants
-    operator <- input$assay_operator
-    if (length(heatmapSelection) > 0) {
-      if (length(heatmapSelection) == 1) {
-        participants <- heatmapSelection[[1]]$participantList
-        studies <- heatmapSelection[[1]]$studyList
-      }
-      if (operator == "AND") {
-        participantList <- sapply(heatmapSelection, "[[", "participantList")
-        participants <- Reduce(intersect, participantList)
-        
-        studyList <- sapply(heatmapSelection, "[[", "studyList")
-        studies <- Reduce(intersect, studyList)
-      } else if (operator == "OR") {
-        participantList <- sapply(heatmapSelection, "[[", "participantList")
-        participants <- Reduce(union, participantList)
-        
-        studyList <- sapply(heatmapSelection, "[[", "studyList")
-        studies <- Reduce(union, studyList)
-      }
-    } else {
-      participants <- character(0)
-      studies <- character(0)
-    }
-    
-    output$selectedText <- renderText({
-      selectedAssayTimepoints <- lapply(heatmapSelection, function(x) {
-        paste0(x$assay, " at ", x$timepoint, " Days")
-      })
-      text <- paste0(selectedAssayTimepoints, collapse = paste0(" ", operator, " "))
-      
-      
-      
-      paste0(
-        text, 
-        "(", 
-        length(participants),
-        " participants from ", length(studies), 
-        " studies) ",
-        paste0(studies, collapse = ", "))
-    }
-    )
-    
-    output$d3Selection <- renderPrint({
-      if (!is.null(input$heatmap_value)) {
-        heatmapSelection
-      } else {
-        "Click on the heatmap to display data here"
-      }
-    })
-    
-    
-    output$interactiveHeatmap <- renderD3({
-      d3Heatmap(reactiveData(),
-                selected)
-    })
-    # # Create text
-    # operator <- input$assay_operator
-    # if (operator == "AND") {
-    #   participantList <- Reduce(heatmapSelection$)
-    # }
-    
-  })
+  # Not Currently In Use -----
+#     
+#     
+#     
+#     output$sampleFilters <- renderUI({
+#       anyallDropdown <- function(id) {
+#         span(class = "form-group shiny-input-container", style = "width:6em;",
+#              tags$select(id = id,
+#                          tags$option(value = "OR", "any of"),
+#                          tags$option(value = "AND", "all of")))
+#       }
+#       tagList(
+#         div(class="filter-dropdown",
+#             tags$p(tags$em("Use the Assay heatmap in the \"Find\" tab for advanced filtering options.")),
+#             .createFilter("assay", span(anyallDropdown("assay_operator"), "these assays"), data),
+#             # filterDiv("AND"),
+#             .createFilter("sample_type", span(anyallDropdown("sample_type_operator"), "these cell types"), data),
+#             # filterDiv("AT"),
+#             .createFilter("timepoint", span(anyallDropdown("timepoint_operator"), "these study days"), data),
+#             div()
+#         )
+#       )
+#     })
+#     
+#     
+#     
+#     # Filter indicators -----
+#     
+#     # # Listeners
+#     # onclick("species_indicator",
+#     #         updateCheckboxGroupInput(session, "species", selected = character(0)))
+#     # onclick("condition_indicator",
+#     #         updateCheckboxGroupInput(session, "condition", selected = character(0)))
+#     # onclick("study_type_indicator",
+#     #         updateCheckboxGroupInput(session, "study_type", selected = character(0)))
+#     # onclick("exposure_material_indicator",
+#     #         updateCheckboxGroupInput(session, "exposure_material", selected = character(0)))
+#     
+#     
+#     
+#     
+#     
+#   output$summaryText <- renderText({
+#     # paste0(
+#     #   "Showing data from ",
+#     #   length(unique(reactiveData()$sampleid)),
+#     #   " samples from ",
+#     #   length(unique(reactiveData()$subjectid)),
+#     #   " subjects in ",
+#     #   length(unique(reactiveData()$study)),
+#     #   " studies."
+#     # )
+#     paste0(
+#       length(unique(reactiveData()$subjectid)),
+#       " participants from ",
+#       length(unique(reactiveData()$study)),
+#       " studies"
+#     )
+#   })
+#     
+#     output$studyCount <- renderText(length(unique(reactiveData()$study)))
+#   
+#   output$dim <- renderText({
+#     paste(
+#       "dim(data) = ", paste0(dim(reactiveData()), collapse = ","))
+#     })
+#   
+#   output$species <- renderText({
+#     paste(
+#       "unique(data$species) = ", paste0(unique(reactiveData()$species), collapse = ",")
+#     )
+#   }) 
+#   
+#   output$gender <- renderText({
+#     paste(
+#       "unique(data$gender) = ", paste0(unique(reactiveData()$gender), collapse = ",")
+#     )
+#   })
+#   
+#   output$assay <- renderText({
+#     paste(
+#       "unique(data$assay) = ", paste0(unique(reactiveData()$assay), collapse = ",")
+#     )
+#   })
+#     
+#   output$participants <- renderText({
+#     paste(
+#       length(unique(reactiveData()$subjectid)),
+#       " subjects"
+#     )
+#   })
+#   
+#   output$Studies <- renderText({
+#     paste(
+#       length(unique(reactiveData()$study)),
+#       " studies"
+#     )
+#   })
+#   
+#   output$Samples <- renderText({
+#     paste(
+#       length(unique(reactiveData()$sampleid)),
+#       " samples"
+#     )
+#   })
+#   
+#   output$timepointHeatmap_sample <- renderPlot({
+#     timepointHeatmap_sample(reactiveData())
+#   })
+#   
+#   output$timepointHeatmap_study <- renderPlot({
+#     timepointHeatmap_study(reactiveData())
+#   })
+#   output$studyHeatmapInfo <- renderText ({
+#     paste0("x=", input$studyHeatmapClick$x, "\ny=", input$studyHeatmapClick$y)
+#   })
+#   # div(plotOutput("timepointHeatmap_study",  height = "200px", click = "studyHeatmapClick")),
+#   # verbatimTextOutput("studyHeatmapInfo"),
+#   
+#   output$upsetPlot <- renderPlot({
+#     upsetPlot(reactiveData())
+#   })
+#   
+#   
+#   
+#   
+#   output$assayBarplot <- renderPlot({
+#     assayBarplot(reactiveData())
+#   })
+#   
+#   # output$interactiveHeatmap <- renderPlotly({
+#   #   d <- formatHeatmapData(reactiveData())
+#   #   plotlyHeatmap <- custom_timepointHeatmap(d, text = paste0("Number of Participants: ", count))
+#   #     htmlwidgets::onRender(plotlyHeatmap,
+#   #                           "//javascript
+#   #   // when hovering over an element, give it a thick, white border
+#   #   function(el, x) {
+#   #   el.on('plotly_click', function(d) {
+#   #   console.log(d.points[0]);
+#   #   });
+#   #   }
+#   # 
+#   # 
+#   #                           "
+#   #     )
+#   # })
+#   
+#   output$selection <- renderPrint({
+#     s <- event_data("plotly_click")
+# 
+# 
+#     if (length(s) == 0) {
+#       "Click on a cell in the heatmap to display data"
+#     } else {
+#       tp <- gsub(" Days", "", s$x)
+#       as <- s$y
+#       rdata <- reactiveData()
+#       d <- formatHeatmapData(rdata)
+#       d <- d[timepoint == tp & assay == as]
+#       cat("You selected:\n\n")
+#       cat(paste0(d$count, " participants and ", length(d$studyList[[1]]), " studies:\n"))
+#       as.list(d$studyList[[1]])
+#     }
+#   })
+# 
 }

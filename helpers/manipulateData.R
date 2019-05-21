@@ -87,7 +87,16 @@ getData <- function(baseUrl = "https://www.immunespace.org",
 
 filterData <- function(data,
                        filters = list(),
-                       operators = list()) {
+                       heatmapFilters = NULL) {
+  if (length(heatmapFilters) > 1) {
+    participantList <- sapply(heatmapFilters, "[[", "participants")
+    participants <- Reduce(intersect, participantList)
+  } else if (length(heatmapFilters) == 1) {
+    participants <- heatmapFilters[[1]]$participants
+  } else {
+    participants <- NULL
+  }
+  filters$subjectid <- participants
   
   # adv-r.had.co.nz/Computing-on-the-language.html
   # http://adv-r.had.co.nz/Expressions.html
@@ -133,7 +142,7 @@ filterData <- function(data,
   filterList <- mapply(.createExprText, 
                        filterName = names(filters),
                        filterValue = filters,
-                       operator = operators[names(filters)],
+                       # operator = operators[names(filters)],
                        SIMPLIFY = FALSE)
   filterText <- paste0(filterList, collapse = " & ")
   

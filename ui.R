@@ -178,9 +178,8 @@ fluidPage(
                                   column(2,
                                          tags$button("Clear"),
                                          tags$button("Apply"))
-                                ),
-                                
-                                div()),
+                                )
+                            ),
                             
                             # By Participant Characteristics
                             div(class = "tab-pane",
@@ -215,7 +214,7 @@ fluidPage(
                                          tags$button("Apply"))
                                 )
                             ),
-                                
+                            
                             # By Available Data
                             div(class = "tab-pane",
                                 "data-value"="Data Available",
@@ -229,75 +228,112 @@ fluidPage(
                                          tags$em("Click on a box in the heatmap to start building a filter")
                                   ),
                                   column(9,
-                                         fluidRow(
-                                           d3Output(outputId = "interactiveHeatmap", height = "250px"),
-                                           span(class = "form-group shiny-input-container", style = "width:6em;",
-                                                tags$select(id = "assay_operator",
-                                                            tags$option(value = "OR", "OR (any of)"),
-                                                            tags$option(value = "AND", "AND (all of)"))),
-                                           textOutput("selectedText"),
-                                           div()
-                                           
-                                         )
-                                         ))
+                                         # Heatmap
+                                         d3Output(outputId = "interactiveHeatmap", height = "250px")
+                                  )),
+                                tags$hr(),
                                 
-                                
-                                
-                                
+                                # Selection
+                                fluidRow(
+                                  style = "margin:25px;",
+                                  actionButton("data-apply", "Apply",
+                                               style = "float:right;"),
+                                  h2("Selection")
                                 ),
+                                fluidRow(
+                                  column(6,
+                                         # Summary of selection
+                                         div(class = "filter-indicator", style = "width: auto;",
+                                             div(id = paste0("data_indicator"),
+                                                 class = paste0("filter-indicator-text sample"),
+                                                 style = "width: auto;",
+                                                 textOutput("selectedText")
+                                             )
+                                         )),
+                                  column(3,
+                                         # Cell type selector
+                                         div(class = "dropdown",
+                                             div(class = "btn-group filterselector", role = "group", style = "width:10em",
+                                                 tags$button("Cell Type", class = "btn btn-default", style="width:8em", type = "button"),
+                                                 tags$button(style="text-align:left;", 
+                                                             HTML("&#9654;"), 
+                                                             class = "btn btn-default dropdown-toggle", 
+                                                             type = "button", 
+                                                             "data-toggle"="dropdown", 
+                                                             style = "width:2em"),
+                                                 div( class="dropdown-menu filter-dropdown", style = "width:10em;",
+                                                      
+                                                      checkboxGroupInput(
+                                                        inputId = "sample_type",
+                                                        label = NULL,
+                                                        choices = unique(data$sample_type)[order( unique(data$sample_type), na.last = TRUE)])))),
+                                         div(class = "filter-indicator", style = "width: 10em;",
+                                             div(id = paste0("sample_type_indicator"),
+                                                 class = paste0("filter-indicator-text sample"),
+                                                 textOutput("cellTypeText")
+                                             )
+                                         )),
+                                  column(3,
+                                         # Operator
+                                         span(class = "form-group shiny-input-container", style = "width:6em;",
+                                              tags$select(id = "assay_operator",
+                                                          tags$option(value = "OR", "OR (any of)"),
+                                                          tags$option(value = "AND", "AND (all of)"))))
+                                )
+                            ),
+                            
+                            # Studies -----
+                            div(class = "tab-pane", id = "tab-top-studies",
+                                # Study cards
+                                div(
+                                  style="float:right;",
+                                  p("Number of Samples"),
+                                  div( style = "",
+                                       studyCardLegend
+                                  )
+                                ),
+                                p(textOutput("studyCount", inline = TRUE), "studies"),
+                                p("Timepoint-assay plots show which timepoints have assay data, where color ",
+                                  "corresponds to number of samples."),
+                                uiOutput("studyCards"),
+                                
+                                div()),
+                            
+                            # Data -----
+                            div(class = "tab-pane", "data-value" = "Data", id = "tab-top-data",
+                                h1("Clinical and Assay Data"),
+                                p("View or download data here (placeholder)")),
+                            
+                            # Visualize -----
+                            div(class = "tab-pane", "data-value" = "Data", id = "tab-top-visualize",
+                                h1("Data Explorer"),
+                                p("Visualize your data here (placeholder)")),
+                            
+                            # Cluster -----
+                            div(class = "tab-pane", "data-value" = "Data", id = "tab-top-cluster",
+                                h1("Dimension Reduction"),
+                                p("Use dimension reduction techniques for clustering data (placeholder)")),
+                            
+                            # Analyze -----
+                            div(class = "tab-pane", "data-value" = "Data", id = "tab-top-analyze",
+                                h1("Gene Expression Analysis Modules"),
+                                p("(placeholder)")),
+                            
+                            
+                            # Resources -----
+                            div(class = "tab-pane", "data-value" = "Data", id = "tab-top-resources",
+                                h1("Resources"),
+                                p("Tours, help, etc (placeholder)")),
                             
                             div()
-                        )))),
-            
-            # Studies -----
-            div(class = "tab-pane", id = "tab-top-studies",
-                # Study cards
-                div(
-                  style="float:right;",
-                  p("Number of Samples"),
-                  div( style = "",
-                       studyCardLegend
-                  )
-                ),
-                p(textOutput("studyCount", inline = TRUE), "studies"),
-                p("Timepoint-assay plots show which timepoints have assay data, where color ",
-                  "corresponds to number of samples."),
-                uiOutput("studyCards"),
-                
-                div()),
-            
-            # Data -----
-            div(class = "tab-pane", "data-value" = "Data", id = "tab-top-data",
-                h1("Clinical and Assay Data"),
-                p("View or download data here (placeholder)")),
-            
-            # Visualize -----
-            div(class = "tab-pane", "data-value" = "Data", id = "tab-top-visualize",
-                h1("Data Explorer"),
-                p("Visualize your data here (placeholder)")),
-            
-            # Cluster -----
-            div(class = "tab-pane", "data-value" = "Data", id = "tab-top-cluster",
-                h1("Dimension Reduction"),
-                p("Use dimension reduction techniques for clustering data (placeholder)")),
-            
-            # Analyze -----
-            div(class = "tab-pane", "data-value" = "Data", id = "tab-top-analyze",
-                h1("Gene Expression Analysis Modules"),
-                p("(placeholder)")),
-            
-            
-            # Resources -----
-            div(class = "tab-pane", "data-value" = "Data", id = "tab-top-resources",
-                h1("Resources"),
-                p("Tours, help, etc (placeholder)")),
-            
-            div()
+                        )
+                    )
+                )
+            )
         )
     )
   )
 )
-
 
 
 

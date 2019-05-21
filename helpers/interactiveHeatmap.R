@@ -36,7 +36,7 @@ formatHeatmapData <- function(data) {
   # Make sure combinations with zero studies have a row, with count = 0.
   df <- expand.grid(assay = assays, timepoint = timepoints_xaxis, stringsAsFactors = FALSE)
   d <- td[, .(studyList = list(unique(study)), 
-              participantList = list(unique(subjectid)),
+              participantList = .(unique(.(subjectid, sample_type))),
               participantCount = length(unique(subjectid))),
           by = c("timepoint", "assay")]
   
