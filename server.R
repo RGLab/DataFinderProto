@@ -195,6 +195,40 @@ function(input, output, session) {
     paste0(input$sample_type, collapse = paste0(" OR "))
   })
   
+  output$sampleTypeIndicators <- renderUI({
+    lapply(input$sample_type, function(x) {
+      
+      id <- gsub(" ", "_", x)
+      tl <- tagList(
+        div(id = paste0(id, "_sample_type_indicator"),
+            class = paste0("filter-indicator-text sample"),
+            style = "width:80%;",
+            x),
+        tags$button(id = paste0(id, "_sample_type_deletor"),
+                    class = "input-group-addon filterdeletor",
+                    style = "width:20%;",
+                    span(class = "glyphicon glyphicon-remove"))
+      )
+      
+      onclick(paste0(id, "_sample_type_deletor"), 
+              updateCheckboxGroupInput(session, "sample_type", selected = input$sample_type[- which(input$sample_type == x)]))
+      
+      tl 
+      
+    })
+  })
+  
+
+  output$customText <- renderText({
+    paste0(
+      length(heatmapSelection$participants),
+      " participants from ",
+      length(heatmapSelection$studies),
+      " studies"
+    )
+  })
+
+  
   ## Listeners ##
   
   observeEvent(input$heatmap_value, {
