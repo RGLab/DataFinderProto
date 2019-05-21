@@ -280,60 +280,62 @@ fluidPage(
                                                           tags$option(value = "OR", "OR (any of)"),
                                                           tags$option(value = "AND", "AND (all of)"))))
                                 )
-                            ),
-                            
-                            # Studies -----
-                            div(class = "tab-pane", id = "tab-top-studies",
-                                # Study cards
-                                div(
-                                  style="float:right;",
-                                  p("Number of Samples"),
-                                  div( style = "",
-                                       studyCardLegend
-                                  )
-                                ),
-                                p(textOutput("studyCount", inline = TRUE), "studies"),
-                                p("Timepoint-assay plots show which timepoints have assay data, where color ",
-                                  "corresponds to number of samples."),
-                                uiOutput("studyCards"),
-                                
-                                div()),
-                            
-                            # Data -----
-                            div(class = "tab-pane", "data-value" = "Data", id = "tab-top-data",
-                                h1("Clinical and Assay Data"),
-                                p("View or download data here (placeholder)")),
-                            
-                            # Visualize -----
-                            div(class = "tab-pane", "data-value" = "Data", id = "tab-top-visualize",
-                                h1("Data Explorer"),
-                                p("Visualize your data here (placeholder)")),
-                            
-                            # Cluster -----
-                            div(class = "tab-pane", "data-value" = "Data", id = "tab-top-cluster",
-                                h1("Dimension Reduction"),
-                                p("Use dimension reduction techniques for clustering data (placeholder)")),
-                            
-                            # Analyze -----
-                            div(class = "tab-pane", "data-value" = "Data", id = "tab-top-analyze",
-                                h1("Gene Expression Analysis Modules"),
-                                p("(placeholder)")),
-                            
-                            
-                            # Resources -----
-                            div(class = "tab-pane", "data-value" = "Data", id = "tab-top-resources",
-                                h1("Resources"),
-                                p("Tours, help, etc (placeholder)")),
-                            
-                            div()
+                            )
                         )
                     )
                 )
-            )
+            ),
+            
+            # Studies -----
+            div(class = "tab-pane", id = "tab-top-studies",
+                # Study cards
+                div(
+                  style="float:right;",
+                  p("Number of Samples"),
+                  div( style = "",
+                       studyCardLegend
+                  )
+                ),
+                p(textOutput("studyCount", inline = TRUE), "studies"),
+                p("Timepoint-assay plots show which timepoints have assay data, where color ",
+                  "corresponds to number of samples."),
+                uiOutput("studyCards"),
+                
+                div()),
+            
+            # Data -----
+            div(class = "tab-pane", "data-value" = "Data", id = "tab-top-data",
+                h1("Clinical and Assay Data"),
+                p("View or download data here (placeholder)")),
+            
+            # Visualize -----
+            div(class = "tab-pane", "data-value" = "Data", id = "tab-top-visualize",
+                h1("Data Explorer"),
+                p("Visualize your data here (placeholder)")),
+            
+            # Cluster -----
+            div(class = "tab-pane", "data-value" = "Data", id = "tab-top-cluster",
+                h1("Dimension Reduction"),
+                p("Use dimension reduction techniques for clustering data (placeholder)")),
+            
+            # Analyze -----
+            div(class = "tab-pane", "data-value" = "Data", id = "tab-top-analyze",
+                h1("Gene Expression Analysis Modules"),
+                p("(placeholder)")),
+            
+            
+            # Resources -----
+            div(class = "tab-pane", "data-value" = "Data", id = "tab-top-resources",
+                h1("Resources"),
+                p("Tours, help, etc (placeholder)")),
+            
+            div()
+            
         )
     )
   )
 )
+
 
 
 
