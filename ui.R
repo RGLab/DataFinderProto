@@ -23,7 +23,7 @@ fluidPage(
   ),
   
   # title ------------------------------
-  titlePanel("Data Finder (v2.4)"),
+  titlePanel("Data Finder (v2.5)"),
   
   # Main -------------------------------
   fluidPage(
@@ -235,62 +235,61 @@ fluidPage(
                                 
                                 # Selection
                                 fluidRow(
-                                  style = "margin:25px;",
-                                  actionButton("data-apply", "Apply"),
-                                  h2("Selection")
-                                ),
-                                fluidRow(
-                                  # Summary of selection
-                                  div(style = "width: 30em; float:left; margin-left:25px;",
-                                      
-                                    div(class = "filter-indicator", 
-                                        div(id = paste0("data_indicator"),
-                                            class = paste0("filter-indicator-text sample"),
-                                            style = "width: auto;",
-                                            textOutput("selectedText")
-                                        )
-                                    ),
-                                    tags$br(),
-                                    textOutput("customText")
-                                    
-                                  ),
-                                  
-                                  # dropdowns
-                                  div( style = "margin-left:15px;float:left;",
-                                       # Operator
-                                       div(class = "form-group shiny-input-container", style = "width:6em;margin-bottom:20px;",
-                                            tags$select(id = "assay_operator",
-                                                        tags$option(value = "OR", "OR (any of)"),
-                                                        tags$option(value = "AND", "AND (all of)"))),
-                                       
-                                       
-                                       # Cell type selector
-                                       div(class = "dropdown",
-                                           div(class = "btn-group filterselector", role = "group", style = "width:10em; ",
-                                               tags$button("Cell Type", class = "btn btn-default", style="width:8em", type = "button"),
-                                               tags$button(style="text-align:left;", 
-                                                           HTML("&#9654;"), 
-                                                           class = "btn btn-default dropdown-toggle", 
-                                                           type = "button", 
-                                                           "data-toggle"="dropdown", 
-                                                           style = "width:2em"),
-                                               div( class="dropdown-menu filter-dropdown", style = "width:10em;",
-                                                    
-                                                    checkboxGroupInput(
-                                                      inputId = "sample_type",
-                                                      label = NULL,
-                                                      choices = unique(data$sample_type)[order( unique(data$sample_type), na.last = TRUE)])),
-                                               div(class = "input-group filter-indicator", style = "width: 10em;",
-                                                   uiOutput("sampleTypeIndicators")
-                                               )
-                                           )
-                                       )
-                                    
+                                  column(3,
+                                         h2("Selection",
+                                            actionButton("data-apply", "Apply")
+                                         )),
+                                  column(9,
+                                         style = "margin-top:15px;",
+                                         
+                                         # Summary of selection
+                                         div(style = "width: 30em; float:left; margin-left:25px;",
+                                             
+                                             div(class = "filter-indicator", 
+                                                 div(id = paste0("data_indicator"),
+                                                     class = paste0("filter-indicator-text sample"),
+                                                     style = "width: auto;",
+                                                     textOutput("selectedText")
+                                                 )
+                                             ),
+                                             tags$br(),
+                                             textOutput("customText")),
+                                         
+                                         # dropdowns
+                                         div( style = "margin-left:15px;float:left;",
+                                              # Operator
+                                              div(class = "form-group shiny-input-container", style = "width:6em;margin-bottom:20px;",
+                                                  tags$select(id = "assay_operator",
+                                                              tags$option(value = "OR", "OR (any of)"),
+                                                              tags$option(value = "AND", "AND (all of)"))),
+                                              
+                                              
+                                              # Cell type selector
+                                              div(class = "dropdown",
+                                                  div(class = "btn-group filterselector", role = "group", style = "width:10em; ",
+                                                      tags$button("Cell Type", class = "btn btn-default", style="width:8em", type = "button"),
+                                                      tags$button(style="text-align:left;", 
+                                                                  HTML("&#9654;"), 
+                                                                  class = "btn btn-default dropdown-toggle", 
+                                                                  type = "button", 
+                                                                  "data-toggle"="dropdown", 
+                                                                  style = "width:2em"),
+                                                      div( class="dropdown-menu filter-dropdown", style = "width:10em;",
+                                                           
+                                                           checkboxGroupInput(
+                                                             inputId = "sample_type",
+                                                             label = NULL,
+                                                             choices = unique(data$sample_type)[order( unique(data$sample_type), na.last = TRUE)])),
+                                                      div(class = "input-group filter-indicator", style = "width: 10em;",
+                                                          uiOutput("sampleTypeIndicators")))))
                                   )
-                                         
-                                         
                                   
                                 )
+                                
+                                
+                                
+                                
+                                
                             )
                         )
                     )
