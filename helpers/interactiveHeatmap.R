@@ -24,10 +24,12 @@ plotlyHeatmap <- function(data) {
 
 # ---------------------------------------------------------------
 
-formatHeatmapData <- function(data) {
+formatHeatmapData <- function(data,
+                              selectedParticipants) {
   
   # Remove samples with no assay data
   td <- data[!is.na(assay) & timepoint != "Unknown"]
+  td[, selected := subjectid %in% selectedParticipants]
   timepoints_xaxis <- c("<0", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12",
                         "13", "14", "15-27", "28", "29-55", "56", ">56")
   assays <- c("PCR", "Neutralizing Antibody", "MBAA", "HLA Typing", "HAI", "Gene Expression",
@@ -35,9 +37,9 @@ formatHeatmapData <- function(data) {
   
   # Make sure combinations with zero studies have a row, with count = 0.
   df <- expand.grid(assay = assays, timepoint = timepoints_xaxis, stringsAsFactors = FALSE)
-  d <- td[, .(studyList = list(unique(study)), 
+  d <- td[, .(studyList = .(unique(study)), 
               participantList = .(unique(.(subjectid, sample_type))),
-              participantCount = length(unique(subjectid))),
+              participantCount = sum(unique(subjectid) %in% selectedParticipants)),
           by = c("timepoint", "assay")]
   
   

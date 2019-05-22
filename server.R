@@ -52,6 +52,7 @@ function(input, output, session) {
     return(rdata)
   })
   
+  
   heatmapSelection <- reactiveValues(
     data = list(),
     selectedIds = list(),
@@ -174,7 +175,8 @@ function(input, output, session) {
   ## outputs ##
   
   output$interactiveHeatmap <- renderD3({
-    d3Heatmap(reactiveData(),
+    d3Heatmap(data,
+              unique(reactiveData()$subjectid),
               heatmapSelection$selectedIds)
   })
   
@@ -245,7 +247,6 @@ function(input, output, session) {
       heatmapSelection$selectedIds <- names(heatmapSelection$data)
     }
     
-    
   })
   
   # Get selection
@@ -254,15 +255,21 @@ function(input, output, session) {
     operator <- input$assay_operator
     if (length(heatmapSelection$data) > 0) {
     if (length(heatmapSelection$data) == 1) {
-      heatmapSelection$participants <- unique(heatmapSelection$data[[1]]$participantList[1,])
-      heatmapSelection$studies <- unique(heatmapSelection$data[[1]]$studyList)
+      if (length(heatmapSelection$data[[1]]$participantList) > 0) {
+        heatmapSelection$participants <- unique(heatmapSelection$data[[1]]$participantList[1,])
+        heatmapSelection$studies <- unique(heatmapSelection$data[[1]]$studyList)
+      } 
     } else if (operator == "AND") {
       participantMatrixList <- lapply(heatmapSelection$data, "[[", "participantList")
       participantList <- lapply(participantMatrixList, function(x){
-        if (!is.null(input$sample_type)) {
-          x[1, x[2,] %in% input$sample_type]
+        if (length(x) > 0) {
+          if (!is.null(input$sample_type)) {
+            x[1, x[2,] %in% input$sample_type]
+          } else {
+            x[1,]
+          }
         } else {
-          x[1,]
+          character(0)
         }
       })
       heatmapSelection$participants <- Reduce(intersect, participantList)
@@ -272,10 +279,14 @@ function(input, output, session) {
     } else if (operator == "OR") {
       participantMatrixList <- lapply(heatmapSelection$data, "[[", "participantList")
       participantList <- lapply(participantMatrixList, function(x){
-        if (!is.null(input$sample_type)) {
-          x[1, x[2,] %in% input$sample_type]
+        if (length(x) > 0) {
+          if (!is.null(input$sample_type)) {
+            x[1, x[2,] %in% input$sample_type]
+          } else {
+            x[1,]
+          }
         } else {
-          x[1,]
+          character(0)
         }
       })
       heatmapSelection$participants <- Reduce(union, participantList)

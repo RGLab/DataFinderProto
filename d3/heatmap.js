@@ -73,7 +73,7 @@ boxes
   .attr("width", xaxisScale.bandwidth())
   .attr("y", function(d) { return yaxisScale(d.assay); })
   .attr("height", yaxisScale.bandwidth())
-  .attr("id", function(d, i) { return "d" + i } ) 
+  .attr("id", function(d) { return d.id } ) 
   .style("fill", function(d) { 
     if (selected.includes(this.id)) {
      return "#fff766"
@@ -135,12 +135,12 @@ boxes
   });
   
 boxes.transition()
-  .duration(500)
+  .duration(100)
   .attr("x", function(d) { return xaxisScale(d.timepoint); })
   .attr("width", xaxisScale.bandwidth())
   .attr("y", function(d) { return yaxisScale(d.assay); })
   .attr("height", yaxisScale.bandwidth())
-  .attr("id", function(d, i) { return "d" + i } ) 
+  .attr("id", function(d, i) { return d.id } ) 
   .style("fill", function(d) { 
     if (selected.includes(this.id)) {
      return "#fff766"
