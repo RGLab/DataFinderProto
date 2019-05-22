@@ -23,7 +23,7 @@ fluidPage(
   ),
   
   # title ------------------------------
-  titlePanel("Data Finder (v2.5)"),
+  titlePanel("Data Finder (v2.6)"),
   
   # Main -------------------------------
   fluidPage(
@@ -67,7 +67,7 @@ fluidPage(
                  fluidRow(
                    column(8,
                           h3("Unsaved Participant Group"),
-                          textOutput("summaryText")),
+                          textOutput("bannerSummary")),
                    column(4,
                           actionButton("load", "Load", class = "btn btn-default", style = "float:right;"),
                           actionButton("save", "Save", class = "btn btn-default", style = "float:right;"),

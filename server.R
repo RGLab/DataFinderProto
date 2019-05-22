@@ -97,6 +97,17 @@ function(input, output, session) {
     ))
   })
   
+  # Banner ------
+  output$bannerSummary <- renderText({
+    paste0(
+      length(unique(reactiveData()$subjectid)),
+      " participants from ",
+      length(unique(reactiveData()$study)),
+      " studies"
+    )
+    
+  })
+  
   # Study Filter Tab -----
   
   ## Outputs ##
@@ -223,7 +234,7 @@ function(input, output, session) {
 
   output$customText <- renderText({
     paste0(
-      length(heatmapSelection$participants),
+      sum(heatmapSelection$participants %in% reactiveData()$subjectid),
       " participants from ",
       length(heatmapSelection$studies),
       " studies"
