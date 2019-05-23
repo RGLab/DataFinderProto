@@ -143,7 +143,8 @@ fluidPage(
                                 id = "tab-find-groups",
                                 
                                 # Tab Contents
-                                h2("Saved Participant Groups")
+                                img(src = "participants_overview.png",
+                                    style = "width:100%")
                             ),
                             
                             # By Study Design
