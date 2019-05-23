@@ -1,3 +1,108 @@
+.createFilterDropdown <- function(filter = "sample_type",
+                      label = "Cell Type",
+                      indicator = "sampleTypeIndicators",
+                      data) {
+  div(class = "dropdown",
+      div(class = "btn-group filterselector", role = "group", style = "width:10em; ",
+          tags$button(label, class = "btn btn-default", style="width:8em", type = "button"),
+          tags$button(style="text-align:left;", 
+                      HTML("&#9660;"), 
+                      class = "btn btn-default dropdown-toggle", 
+                      type = "button", 
+                      "data-toggle"="dropdown", 
+                      style = "width:2em"),
+          div( class="dropdown-menu filter-dropdown", style = "width:10em;",
+               
+               checkboxGroupInput(
+                 inputId = filter,
+                 label = NULL,
+                 choices = unique(data[[filter]])[order( unique(data[[filter]]), na.last = TRUE)])),
+          div(class = "input-group filter-indicator", style = "width: 10em;",
+              uiOutput(indicator))))
+}
+
+.createSingleIndicators <- function(filter = "sample_type",
+                        class = "sample",
+                        input,
+                        session) {
+  lapply(input[[filter]], function(x) {
+    
+    id <- gsub(" ", "_", x)
+    tl <- tagList(
+      div(id = paste0(id, "_", filter, "_indicator"),
+          class = paste0("filter-indicator-text ", class),
+          style = "width:80%;",
+          x),
+      tags$button(id = paste0(id, "_", filter, "_deletor"),
+                  class = "input-group-addon filterdeletor",
+                  style = "width:20%;",
+                  span(class = "glyphicon glyphicon-remove"))
+    )
+    
+    onclick(paste0(id, "_", filter, "_deletor"), 
+            updateCheckboxGroupInput(session, filter, selected = input[[filter]][- which(input[[filter]] == x)]))
+    
+    tl 
+    
+  })
+}
+
+
+# This creates the "filter indicators
+createFilterIndicators <- function(session,
+                                   input, 
+                                   options, 
+                                   class) {
+  # Create ui elements
+  renderUI({
+    i <- input
+    indicatorList <- list()
+    for (x in options) {
+      operator <- ifelse(paste0(x, "_operator") %in% names(i), i[[paste0(x, "_operator")]], "OR")
+      if (!is.null(i[[x]])) {
+        if (length(i[[x]]) > 1) {
+          indicatorText <- paste0(x, 
+                                  " is \"",
+                                  paste0(i[[x]], 
+                                         collapse = paste0("\" ", operator, " \"")),
+                                  "\"") 
+        } else {
+          indicatorText <- paste0(x, " is \"", i[[x]], "\"")
+        }
+        
+        # <div class="input-group filter-indicator">
+        #   <div id = "species_indicator" class="filterindicator study">study_type is "longitudinal"</div>
+        #   <button id = "species_deletor" class="input-group-addon filterdeletor">
+        #     <span class = "glyphicon glyphicon-remove"></span>
+        #   </button>
+        # </div>
+        
+        indicatorList[[x]] <- div(class = "input-group filter-indicator",
+                                  div(id = paste0(x, "_indicator"),
+                                      class = paste0("filter-indicator-text ", class),
+                                      indicatorText
+                                  ),
+                                  tags$button(id = paste0(x, "_deletor"),
+                                              class = "input-group-addon filterdeletor",
+                                              span(class = "glyphicon glyphicon-remove"))
+        )
+      }
+      
+      
+      
+    }
+    if (length(indicatorList) == 0) {
+      tags$em("No filters currently applied")
+    } else {
+      indicatorList
+    }
+  })
+  
+}
+
+
+
+
 # This is the button that you click on to expand the dropright menu
 .filterSelector <- function(buttonText, filterClass) {
   div(class = "dropdown",
@@ -65,58 +170,6 @@
   
 }
 
-
-# This creates the "filter indicators
-createFilterIndicators <- function(session,
-                                   input, 
-                                   options, 
-                                   class) {
-  # Create ui elements
-  renderUI({
-    i <- reactiveValuesToList(input)
-    indicatorList <- list()
-    for (x in options) {
-      operator <- ifelse(paste0(x, "_operator") %in% names(i), i[[paste0(x, "_operator")]], "OR")
-      if (!is.null(i[[x]])) {
-        if (length(i[[x]]) > 1) {
-          indicatorText <- paste0(x, 
-                         " is \"",
-                         paste0(i[[x]], 
-                                collapse = paste0("\" ", operator, " \"")),
-                         "\"") 
-        } else {
-          indicatorText <- paste0(x, " is \"", i[[x]], "\"")
-        }
-          
-          # <div class="input-group filter-indicator">
-          #   <div id = "species_indicator" class="filterindicator study">study_type is "longitudinal"</div>
-          #   <button id = "species_deletor" class="input-group-addon filterdeletor">
-          #     <span class = "glyphicon glyphicon-remove"></span>
-          #   </button>
-          # </div>
-        
-        indicatorList[[x]] <- div(class = "input-group filter-indicator",
-                                  div(id = paste0(x, "_indicator"),
-                                      class = paste0("filter-indicator-text ", class),
-                                      indicatorText
-                                  ),
-                                  tags$button(id = paste0(x, "_deletor"),
-                                              class = "input-group-addon filterdeletor",
-                                              span(class = "glyphicon glyphicon-remove"))
-        )
-      }
-      
-
-      
-    }
-    if (length(indicatorList) == 0) {
-      tags$em("No filters currently applied")
-    } else {
-      indicatorList
-    }
-  })
-  
-}
 
 createSampleFilterIndicators <- function(session,
                                         appliedFilters) {

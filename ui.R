@@ -79,7 +79,7 @@ fluidPage(
                           uiOutput("studyIndicators")),
                    column(4,
                           h4("Participant Characteristics"),
-                          uiOutput("subjectIndicators")),
+                          uiOutput("participantIndicators")),
                    column(4,
                           h4("Participant Data Includes"),
                           uiOutput("sampleIndicators"))
@@ -165,19 +165,33 @@ fluidPage(
                                 ),
                                 tags$hr(),
                                 fluidRow(
+                                  column(4,
+                                         h2("Selection", style = "display:inline-block"),
+                                         actionButton("study-clear", "Reset"),
+                                         actionButton("study-apply", "Apply"),
+                                         div(textOutput("studySelection"))
+                                         ),
                                   column(2,
-                                         h3("Edit Filters")),
+                                         .createFilterDropdown(filter = "species", 
+                                                               label = "Species", 
+                                                               indicator = "speciesIndicators",
+                                                               data)),
                                   column(2,
-                                         .createFilter("species", "Species", data)),
+                                         .createFilterDropdown(filter = "condition",
+                                                               label = "Disease Studied",
+                                                               indicator = "conditionIndicators",
+                                                               data)),
                                   column(2,
-                                         .createFilter("condition", "Disease Studied", data)),
+                                         .createFilterDropdown(filter = "exposure_material",
+                                                               label = "Vaccine Studied",
+                                                               indicator = "exposureMaterialIndicators",
+                                                               data)),
                                   column(2,
-                                         .createFilter("exposure_material", "Vaccine studied", data)),
-                                  column(2,
-                                         .createFilter("study", "Study ID", data)),
-                                  column(2,
-                                         tags$button("Clear"),
-                                         tags$button("Apply"))
+                                         .createFilterDropdown(filter = "study",
+                                                               label = "Study ID", 
+                                                               indicator = "studyIdIndicator",
+                                                               data))
+                                  
                                 )
                             ),
                             
@@ -200,18 +214,26 @@ fluidPage(
                                 ),
                                 tags$hr(),
                                 fluidRow(
+                                  column(4,
+                                         h2("Selection", style = "display:inline-block"),
+                                         actionButton("participant-apply", "Apply"),
+                                         actionButton("participant-clear", "Reset"),
+                                         div(textOutput("participantSelection"))),
                                   column(2,
-                                         h3("Edit Filters")),
+                                         .createFilterDropdown(filter = "gender",
+                                                               label = "Gender",
+                                                               indicator = "genderIndicators",
+                                                               data)),
                                   column(2,
-                                         .createFilter("gender", "Gender", data)),
+                                         .createFilterDropdown(filter = "age",
+                                                               label = "Age",
+                                                               indicator = "ageIndicators",
+                                                               data)),
                                   column(2,
-                                         .createFilter("age", "Age", data)),
-                                  column(2,
-                                         .createFilter("race", "Race", data)),
-                                  column(2),
-                                  column(2,
-                                         tags$button("Clear"),
-                                         tags$button("Apply"))
+                                         .createFilterDropdown(filter = "race",
+                                                               label = "Race",
+                                                               indicator = "raceIndicators",
+                                                               data))
                                 )
                             ),
                             
@@ -235,15 +257,16 @@ fluidPage(
                                 
                                 # Selection
                                 fluidRow(
-                                  column(3,
-                                         h2("Selection",
-                                            actionButton("data-apply", "Apply")
-                                         )),
-                                  column(9,
+                                  column(4,
+                                         h2("Selection", style = "display:inline-block"),
+                                         actionButton("data-apply", "Apply"),
+                                         actionButton("data-clear", "Reset"),
+                                         textOutput("customText")),
+                                  column(8,
                                          style = "margin-top:15px;",
                                          
                                          # Summary of selection
-                                         div(style = "width: 30em; float:left; margin-left:25px;",
+                                         div(style = "width: 20em; float:left; margin-left:25px;",
                                              
                                              div(class = "filter-indicator", 
                                                  div(id = paste0("data_indicator"),
@@ -252,8 +275,7 @@ fluidPage(
                                                      textOutput("selectedText")
                                                  )
                                              ),
-                                             tags$br(),
-                                             textOutput("customText")),
+                                             tags$br()),
                                          
                                          # dropdowns
                                          div( style = "margin-left:15px;float:left;",
@@ -265,26 +287,13 @@ fluidPage(
                                               
                                               
                                               # Cell type selector
-                                              div(class = "dropdown",
-                                                  div(class = "btn-group filterselector", role = "group", style = "width:10em; ",
-                                                      tags$button("Cell Type", class = "btn btn-default", style="width:8em", type = "button"),
-                                                      tags$button(style="text-align:left;", 
-                                                                  HTML("&#9654;"), 
-                                                                  class = "btn btn-default dropdown-toggle", 
-                                                                  type = "button", 
-                                                                  "data-toggle"="dropdown", 
-                                                                  style = "width:2em"),
-                                                      div( class="dropdown-menu filter-dropdown", style = "width:10em;",
-                                                           
-                                                           checkboxGroupInput(
-                                                             inputId = "sample_type",
-                                                             label = NULL,
-                                                             choices = unique(data$sample_type)[order( unique(data$sample_type), na.last = TRUE)])),
-                                                      div(class = "input-group filter-indicator", style = "width: 10em;",
-                                                          uiOutput("sampleTypeIndicators")))))
-                                  )
-                                  
-                                )
+                                              .createFilterDropdown(filter = "sample_type", 
+                                                                    label = "Cell Type", 
+                                                                    indicator = "sampleTypeIndicators",
+                                                                    data = data)
+                                              )
+                                         
+                                  ))
                                 
                                 
                                 
