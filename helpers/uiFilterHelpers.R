@@ -4,13 +4,14 @@
                       data) {
   div(class = "dropdown",
       div(class = "btn-group filterselector", role = "group", style = "width:10em; ",
-          tags$button(label, class = "btn btn-default", style="width:8em", type = "button"),
+          # tags$button(label, class = "btn btn-default", style="width:8em", type = "button"),
           tags$button(style="text-align:left;", 
-                      HTML("&#9660;"), 
+                      span(label),
+                      span(HTML("&#9660;"), stlye = "float:right"), 
                       class = "btn btn-default dropdown-toggle", 
                       type = "button", 
                       "data-toggle"="dropdown", 
-                      style = "width:2em"),
+                      style = "width:auto"),
           div( class="dropdown-menu filter-dropdown", style = "width:10em;",
                
                checkboxGroupInput(
