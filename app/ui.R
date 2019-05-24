@@ -309,16 +309,15 @@ fluidPage(
             # Studies -----
             div(class = "tab-pane", id = "tab-top-studies",
                 # Study cards
-                div(
-                  style="float:right;",
-                  p("Number of Samples"),
-                  div( style = "",
-                       studyCardLegend
-                  )
-                ),
-                p(textOutput("studyCount", inline = TRUE), "studies"),
-                p("Timepoint-assay plots show which timepoints have assay data, where color ",
-                  "corresponds to number of samples."),
+                # div(
+                #   style="float:right;",
+                #   p("Number of Samples"),
+                #   div( style = "",
+                #        studyCardLegend
+                #   )
+                # ),
+                h1("Current Selection includes: ", textOutput("studyCount", inline = TRUE), "studies"),
+                p("From here you can browse studies included in the current participant group, or \"go to \" a study of interest."),
                 uiOutput("studyCards"),
                 
                 div()),

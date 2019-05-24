@@ -39,6 +39,8 @@ createStudyCard <- function(studyName, data, origData, output, studyTitle = "Tit
     tags$input(type = "checkbox", name = paste0(studyName, "_check"), value = paste0(studyName, "_check")),
     span(studyName, style = "font-size:1.2em;"),
     span("Helen Miller", style = "float:right;font-size:1.2em"),  # Study PI
+    br(),
+    a("Go to study", span(class = "glyphicon glyphicon-share-alt")),
     tags$hr(style="margin-top:5px;margin-bottom:10px;"),
     div(studyTitle, tags$a(">>", style = "cursor:pointer;"), 
         style = "text-align:left;font-weight:bold;font-size:1.1em;margin-bottom:10px;"),

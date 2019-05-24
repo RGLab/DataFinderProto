@@ -373,9 +373,7 @@ function(input, output, session) {
           }
         })
         heatmapSelection$participants <- Reduce(intersect, participantList)
-        
-        studyList <- sapply(heatmapSelection$data, "[[", "studyList")
-        heatmapSelection$studies <- Reduce(intersect, studyList)
+        heatmapSelection$studies <- unique(gsub("^SUB[^\\.]+.", "", heatmapSelection$participants))
       } else if (operator == "OR") {
         participantMatrixList <- lapply(heatmapSelection$data, "[[", "participantList")
         participantList <- lapply(participantMatrixList, function(x){
@@ -390,8 +388,7 @@ function(input, output, session) {
           }
         })
         heatmapSelection$participants <- Reduce(union, participantList)
-        studyList <- sapply(heatmapSelection$data, "[[", "studyList")
-        heatmapSelection$studies <- Reduce(union, studyList)
+        heatmapSelection$studies <- unique(gsub("^SUB[^\\.]+.", "", heatmapSelection$participants))
       }
     } else {
       heatmapSelection$participants <- character(0)
@@ -474,6 +471,7 @@ function(input, output, session) {
   
   
   # Study cards ----
+  output$studyCount <- renderText(length(unique(reactiveData()$study)))
   output$studyCards <- renderUI({
     studies <- unique(reactiveData()$study)
     # Sort studies by number
