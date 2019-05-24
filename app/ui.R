@@ -324,23 +324,19 @@ fluidPage(
             
             # Data -----
             div(class = "tab-pane", "data-value" = "Data", id = "tab-top-data",
-                h1("Clinical and Assay Data"),
-                p("View or download data here (placeholder)")),
+                tags$img(src = "data.png", style = "width:100%;")),
             
             # Visualize -----
             div(class = "tab-pane", "data-value" = "Data", id = "tab-top-visualize",
-                h1("Data Explorer"),
-                p("Visualize your data here (placeholder)")),
+                tags$img(src = "data_explorer.png", style = "width:100%;")),
             
             # Cluster -----
             div(class = "tab-pane", "data-value" = "Data", id = "tab-top-cluster",
-                h1("Dimension Reduction"),
-                p("Use dimension reduction techniques for clustering data (placeholder)")),
+                tags$img(src = "dimension_reduction.png", style = "width:100%;")),
             
             # Analyze -----
             div(class = "tab-pane", "data-value" = "Data", id = "tab-top-analyze",
-                h1("Gene Expression Analysis Modules"),
-                p("(placeholder)")),
+                tags$img(src = "modules.png", style = "width:100%;")),
             
             
             # Resources -----
