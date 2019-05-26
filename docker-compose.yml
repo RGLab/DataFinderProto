@@ -1,0 +1,9 @@
+version: '2'
+services:
+  datafinderproto:
+    image: dockerimages.fhcrc.org/datafinderproto:latest
+
+    labels:
+      io.rancher.container.pull_image: always
+
+    restart: always
