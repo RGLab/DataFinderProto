@@ -14,7 +14,7 @@ dependencies:
 test:
   override:
     - docker run -d --name datafinderproto -p 8888:8888 dockerimages.fhcrc.org/datafinderproto:latest
-    - sleep 15 && curl --retry 10 --retry-delay 5 -v -u ${AUTH_USERNAME}${AUTH_PASSWORD} http://${BUILD_HOST}:8888
+    - sleep 15 && curl --retry 10 --retry-delay 5 -v -u ${AUTH_USERNAME}:${AUTH_PASSWORD} http://${BUILD_HOST}:8888
     - docker stop datafinderproto && docker rm --force datafinderproto
 
 deployment:
