@@ -1,4 +1,5 @@
 FROM fredhutch/r-shiny-base:latest
+RUN echo "deb http://ftp.us.debian.org/debian/ testing main contrib non-free" >> /etc/apt/sources.list
 RUN apt-get update -y
 RUN apt-get install -y pandoc supervisor nginx
 RUN useradd -u 5555 -m -d /home/shiny -c "shiny user" shiny
