@@ -21,7 +21,7 @@ library(r2d3)
 
 # Set up cache
 # Be sure to wipe cache if plotting function changes
-shinyOptions(cache = diskCache("plot-cache"))
+shinyOptions(cache = diskCache(tempdir("plot-cache")))
 
 # Source helper files
 helperFiles <- list.files("helpers")
