@@ -62,29 +62,7 @@ fluidPage(
                                "data-toggle" = "tab", 
                                "data-value" = "Resources"))),
         
-        # Filter bar -----
-        fluidRow(style = "background-color:#f7f7f9",
-                 fluidRow(
-                   column(8,
-                          h3("Unsaved Participant Group"),
-                          textOutput("bannerSummary")),
-                   column(4,
-                          actionButton("load", "Load", class = "btn btn-default", style = "float:right;"),
-                          actionButton("save", "Save", class = "btn btn-default", style = "float:right;"),
-                          actionButton("clear_input", "Clear All", class = "btn btn-default", style = "float:right;"))
-                 ),
-                 fluidRow(
-                   column(4,
-                          h4("Study Design"),
-                          uiOutput("studyIndicators")),
-                   column(4,
-                          h4("Participant Characteristics"),
-                          uiOutput("participantIndicators")),
-                   column(4,
-                          h4("Participant Data Includes"),
-                          uiOutput("sampleIndicators"))
-                 )
-        ),
+
         # div(style="width:100%;background-color:#f7f7f9",
         #   h2("Participant Group"),
         #   tags$p("Information about applied filters")),
@@ -94,7 +72,30 @@ fluidPage(
         div(class = "tab-content", "data-tabsetid" = "top",
             
             # Find Participants -----
-            div(class = "tab-pane active", "data-value" = "Find Participants", id = "tab-top-find",
+            div(class = "tab-pane active", id = "tab-top-find",
+                # Filter bar -----
+                fluidRow(style = "background-color:#f7f7f9",
+                         fluidRow(
+                           column(8,
+                                  h3("Unsaved Participant Group"),
+                                  textOutput("bannerSummary0")),
+                           column(4,
+                                  actionButton("load", "Load", class = "btn btn-default", style = "float:right;"),
+                                  actionButton("save", "Save", class = "btn btn-default", style = "float:right;"),
+                                  actionButton("clear_input", "Clear All", class = "btn btn-default", style = "float:right;"))
+                         ),
+                         fluidRow(
+                           column(4,
+                                  h4("Study Design"),
+                                  uiOutput("studyIndicators")),
+                           column(4,
+                                  h4("Participant Characteristics"),
+                                  uiOutput("participantIndicators")),
+                           column(4,
+                                  h4("Participant Data Includes"),
+                                  uiOutput("sampleIndicators"))
+                         )
+                ),
                 div(class = "row",
                     
                     # Find Participants tabs -----
@@ -308,6 +309,29 @@ fluidPage(
             
             # Studies -----
             div(class = "tab-pane", id = "tab-top-studies",
+                # Filter bar -----
+                fluidRow(style = "background-color:#f7f7f9",
+                         fluidRow(
+                           column(8,
+                                  h3("Unsaved Participant Group"),
+                                  textOutput("bannerSummary1")),
+                           column(4,
+                                  tags$button("Load", type = "button", class = "btn btn-default", style = "float:right;", disabled = TRUE),
+                                  tags$button("Save", type = "button", class = "btn btn-default", style = "float:right;", disabled = TRUE),
+                                  tags$button("Clear All", type = "button", class = "btn btn-default", style = "float:right;", disabled = TRUE))
+                         ),
+                         fluidRow(
+                           column(4,
+                                  h4("Study Design"),
+                                  uiOutput("1-staticstudy")),
+                           column(4,
+                                  h4("Participant Characteristics"),
+                                  uiOutput("1-staticparti")),
+                           column(4,
+                                  h4("Participant Data Includes"),
+                                  uiOutput("1-staticsample"))
+                         )
+                ),
                 # Study cards
                 # div(
                 #   style="float:right;",
@@ -324,23 +348,137 @@ fluidPage(
             
             # Data -----
             div(class = "tab-pane", "data-value" = "Data", id = "tab-top-data",
+                # Filter bar -----
+                fluidRow(style = "background-color:#f7f7f9",
+                         fluidRow(
+                           column(8,
+                                  h3("Unsaved Participant Group"),
+                                  textOutput("bannerSummary2")),
+                           column(4,
+                                  tags$button("Load", type = "button", class = "btn btn-default", style = "float:right;", disabled = TRUE),
+                                  tags$button("Save", type = "button", class = "btn btn-default", style = "float:right;", disabled = TRUE),
+                                  tags$button("Clear All", type = "button", class = "btn btn-default", style = "float:right;", disabled = TRUE))
+                         ),
+                         fluidRow(
+                           column(4,
+                                  h4("Study Design"),
+                                  uiOutput("2-staticstudy")),
+                           column(4,
+                                  h4("Participant Characteristics"),
+                                  uiOutput("2-staticparti")),
+                           column(4,
+                                  h4("Participant Data Includes"),
+                                  uiOutput("2-staticsample"))
+                         )
+                ),
                 tags$img(src = "data.png", style = "width:100%;")),
             
             # Visualize -----
-            div(class = "tab-pane", "data-value" = "Data", id = "tab-top-visualize",
+            div(class = "tab-pane", "data-value" = "Data", id = "tab-top-visualize",# Filter bar -----
+                fluidRow(style = "background-color:#f7f7f9",
+                         fluidRow(
+                           column(8,
+                                  h3("Unsaved Participant Group"),
+                                  textOutput("bannerSummary3")),
+                           column(4,
+                                  tags$button("Load", type = "button", class = "btn btn-default", style = "float:right;", disabled = TRUE),
+                                  tags$button("Save", type = "button", class = "btn btn-default", style = "float:right;", disabled = TRUE),
+                                  tags$button("Clear All", type = "button", class = "btn btn-default", style = "float:right;", disabled = TRUE))
+                         ),
+                         fluidRow(
+                           column(4,
+                                  h4("Study Design"),
+                                  uiOutput("3-staticstudy")),
+                           column(4,
+                                  h4("Participant Characteristics"),
+                                  uiOutput("3-staticparti")),
+                           column(4,
+                                  h4("Participant Data Includes"),
+                                  uiOutput("3-staticsample"))
+                         )
+                ),
                 tags$img(src = "data_explorer.png", style = "width:100%;")),
             
             # Cluster -----
             div(class = "tab-pane", "data-value" = "Data", id = "tab-top-cluster",
+                # Filter bar -----
+                fluidRow(style = "background-color:#f7f7f9",
+                         fluidRow(
+                           column(8,
+                                  h3("Unsaved Participant Group"),
+                                  textOutput("bannerSummary4")),
+                           column(4,
+                                  tags$button("Load", type = "button", class = "btn btn-default", style = "float:right;", disabled = TRUE),
+                                  tags$button("Save", type = "button", class = "btn btn-default", style = "float:right;", disabled = TRUE),
+                                  tags$button("Clear All", type = "button", class = "btn btn-default", style = "float:right;", disabled = TRUE))
+                         ),
+                         fluidRow(
+                           column(4,
+                                  h4("Study Design"),
+                                  uiOutput("4-staticstudy")),
+                           column(4,
+                                  h4("Participant Characteristics"),
+                                  uiOutput("4-staticparti")),
+                           column(4,
+                                  h4("Participant Data Includes"),
+                                  uiOutput("4-staticsample"))
+                         )
+                ),
                 tags$img(src = "dimension_reduction.png", style = "width:100%;")),
             
             # Analyze -----
             div(class = "tab-pane", "data-value" = "Data", id = "tab-top-analyze",
+                # Filter bar -----
+                fluidRow(style = "background-color:#f7f7f9",
+                         fluidRow(
+                           column(8,
+                                  h3("Unsaved Participant Group"),
+                                  textOutput("bannerSummary5")),
+                           column(4,
+                                  tags$button("Load", type = "button", class = "btn btn-default", style = "float:right;", disabled = TRUE),
+                                  tags$button("Save", type = "button", class = "btn btn-default", style = "float:right;", disabled = TRUE),
+                                  tags$button("Clear All", type = "button", class = "btn btn-default", style = "float:right;", disabled = TRUE))
+                         ),
+                         fluidRow(
+                           column(4,
+                                  h4("Study Design"),
+                                  uiOutput("5-staticstudy")),
+                           column(4,
+                                  h4("Participant Characteristics"),
+                                  uiOutput("5-staticparti")),
+                           column(4,
+                                  h4("Participant Data Includes"),
+                                  uiOutput("5-staticsample"))
+                         )
+                ),
                 tags$img(src = "modules.png", style = "width:100%;")),
             
             
             # Resources -----
             div(class = "tab-pane", "data-value" = "Data", id = "tab-top-resources",
+                # Filter bar -----
+                fluidRow(style = "background-color:#f7f7f9",
+                         fluidRow(
+                           column(8,
+                                  h3("Unsaved Participant Group"),
+                                  textOutput("bannerSummary6")),
+                           column(4,
+                                  tags$button("Load", type = "button", class = "btn btn-default", style = "float:right;", disabled = TRUE),
+                                  tags$button("Save", type = "button", class = "btn btn-default", style = "float:right;", disabled = TRUE),
+                                  tags$button("Clear All", type = "button", class = "btn btn-default", style = "float:right;", disabled = TRUE))
+                         ),
+                         fluidRow(
+                           column(4,
+                                  h4("Study Design"),
+                                  uiOutput("6-staticstudy")),
+                           column(4,
+                                  h4("Participant Characteristics"),
+                                  uiOutput("6-staticparti")),
+                           column(4,
+                                  h4("Participant Data Includes"),
+                                  uiOutput("6-staticsample"))
+                         )
+                ),
                 h1("Resources"),
                 p("Tours, help, etc (placeholder)")),
             

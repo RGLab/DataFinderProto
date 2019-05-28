@@ -1,7 +1,7 @@
 .createFilterDropdown <- function(filter = "sample_type",
-                      label = "Cell Type",
-                      indicator = "sampleTypeIndicators",
-                      data) {
+                                  label = "Cell Type",
+                                  indicator = "sampleTypeIndicators",
+                                  data) {
   div(class = "dropdown",
       div(class = "btn-group filterselector", role = "group", style = "width:10em; ",
           # tags$button(label, class = "btn btn-default", style="width:8em", type = "button"),
@@ -23,9 +23,9 @@
 }
 
 .createSingleIndicators <- function(filter = "sample_type",
-                        class = "sample",
-                        input,
-                        session) {
+                                    class = "sample",
+                                    input,
+                                    session) {
   lapply(input[[filter]], function(x) {
     
     id <- gsub(" ", "_", x)
@@ -79,13 +79,15 @@ createFilterIndicators <- function(session,
         # </div>
         
         indicatorList[[x]] <- div(class = "input-group filter-indicator",
-                                  div(id = paste0(x, "_indicator"),
+                                  div(id = paste0( x, "_indicator"),
                                       class = paste0("filter-indicator-text ", class),
                                       indicatorText
                                   ),
-                                  tags$button(id = paste0(x, "_deletor"),
-                                              class = "input-group-addon filterdeletor",
-                                              span(class = "glyphicon glyphicon-remove"))
+                                    tags$button(id = paste0(x, "_deletor"),
+                                                class = "input-group-addon filterdeletor",
+                                                span(class = "glyphicon glyphicon-remove"))
+                                  
+                                  
         )
       }
       
@@ -98,6 +100,68 @@ createFilterIndicators <- function(session,
       indicatorList
     }
   })
+  
+}
+# This creates the "filter indicators
+createStaticFilterIndicators <- function(session,
+                                   input, 
+                                   options, 
+                                   class) {
+  
+  indicatorList <- list()
+  # Create ui elements
+  if (class == "sample") {
+    
+    for (filter in names(input)) {
+      indicatorText <- input[[filter]]$text
+      indicatorList[[filter]] <- div(class = "input-group filter-indicator",
+                                     div(class = paste0("filter-indicator-text ", "sample"),
+                                         indicatorText
+                                     )
+      )
+    }
+    
+  } else {
+    
+    i <- input
+
+    for (x in options) {
+      operator <- ifelse(paste0(x, "_operator") %in% names(i), i[[paste0(x, "_operator")]], "OR")
+      if (!is.null(i[[x]])) {
+        if (length(i[[x]]) > 1) {
+          indicatorText <- paste0(x, 
+                                  " is \"",
+                                  paste0(i[[x]], 
+                                         collapse = paste0("\" ", operator, " \"")),
+                                  "\"") 
+        } else {
+          indicatorText <- paste0(x, " is \"", i[[x]], "\"")
+        }
+        
+        # <div class="input-group filter-indicator">
+        #   <div id = "species_indicator" class="filterindicator study">study_type is "longitudinal"</div>
+        #   <button id = "species_deletor" class="input-group-addon filterdeletor">
+        #     <span class = "glyphicon glyphicon-remove"></span>
+        #   </button>
+        # </div>
+        
+        indicatorList[[x]] <- div(class = "input-group filter-indicator",
+                                  div(class = paste0("filter-indicator-text ", class),
+                                      indicatorText)
+                                  
+        )
+      }
+      
+      
+      
+    }
+  }
+    
+    if (length(indicatorList) == 0) {
+      tags$em("No filters currently applied")
+    } else {
+      indicatorList
+    }
   
 }
 
@@ -173,35 +237,40 @@ createFilterIndicators <- function(session,
 
 
 createSampleFilterIndicators <- function(session,
-                                        appliedFilters) {
+                                         appliedFilters,
+                                         deletor = TRUE,
+                                         idNumber = NULL) {
   # Create ui elements
-    indicatorList <- list()
-    for (filter in names(appliedFilters)) {
-      indicatorText <- appliedFilters[[filter]]$text
-        
-        # <div class="input-group filter-indicator">
-        #   <div id = "species_indicator" class="filterindicator study">study_type is "longitudinal"</div>
-        #   <button id = "species_deletor" class="input-group-addon filterdeletor">
-        #     <span class = "glyphicon glyphicon-remove"></span>
-        #   </button>
-        # </div>
-        
-        indicatorList[[filter]] <- div(class = "input-group filter-indicator",
-                                  div(id = paste0(filter, "_indicator"),
-                                      class = paste0("filter-indicator-text ", "sample"),
-                                      indicatorText
-                                  ),
-                                  tags$button(id = paste0(filter, "_deletor"),
-                                              class = "input-group-addon filterdeletor",
-                                              span(class = "glyphicon glyphicon-remove"))
-        )
-      }
-      
-    if (length(indicatorList) == 0) {
-      tags$em("No filters currently applied")
-    } else {
-      indicatorList
-    }
+  indicatorList <- list()
+  for (filter in names(appliedFilters)) {
+    indicatorText <- appliedFilters[[filter]]$text
+    
+    # <div class="input-group filter-indicator">
+    #   <div id = "species_indicator" class="filterindicator study">study_type is "longitudinal"</div>
+    #   <button id = "species_deletor" class="input-group-addon filterdeletor">
+    #     <span class = "glyphicon glyphicon-remove"></span>
+    #   </button>
+    # </div>
+    
+    indicatorList[[filter]] <- div(class = "input-group filter-indicator",
+                                   div(id = paste0(idNumber, filter, "_indicator"),
+                                       class = paste0("filter-indicator-text ", "sample"),
+                                       indicatorText
+                                   ),
+                                   if (deletor) {
+                                     tags$button(idNumber, id = paste0(filter, "_deletor"),
+                                                 class = "input-group-addon filterdeletor",
+                                                 span(class = "glyphicon glyphicon-remove"))
+                                   }
+                                   
+    )
+  }
+  
+  if (length(indicatorList) == 0) {
+    tags$em("No filters currently applied")
+  } else {
+    indicatorList
+  }
 }
 
 # This is just a wrapper for styling other text within the filter dropdown menu

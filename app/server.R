@@ -121,14 +121,16 @@ function(input, output, session) {
   })
   
   # Banner ------
-  output$bannerSummary <- renderText({
-    paste0(
-      length(unique(reactiveData()$subjectid)),
-      " participants from ",
-      length(unique(reactiveData()$study)),
-      " studies"
-    )
-    
+  sapply(0:6, function(n) {
+    output[[paste0("bannerSummary", n)]] <- renderText({
+      paste0(
+        length(unique(reactiveData()$subjectid)),
+        " participants from ",
+        length(unique(reactiveData()$study)),
+        " studies"
+      )
+      
+    })
   })
   
   output$sampleIndicators <- renderUI({
@@ -144,7 +146,94 @@ function(input, output, session) {
                                                    studyFilters,
                                                    options = c("study", "exposure_material", "study_type", "condition", "species"), 
                                                    class = "study")
+
+
+  sapply(1:6, function(n) {
+    output[[paste0(n, "-staticsample")]] <- renderUI(createStaticFilterIndicators(session,
+                                                                     heatmapSelection$appliedFilters,
+                                                                     options = NULL,
+                                                                     class = "sample"))
+    output[[paste0(n, "-staticstudy")]] <- renderUI(createStaticFilterIndicators(session,
+                                                                    studyFilters,
+                                                                    options = c("study", "exposure_material", "study_type", "condition", "species"),
+                                                                    class = "study"))
+    output[[paste0(n, "-staticparti")]] <- renderUI(createStaticFilterIndicators(session,
+                                                                    participantFilters,
+                                                                    options = c("gender", "race", "age"),
+                                                                    class = "participant"))
+  })
+
   
+  
+  # output$`1-staticsample` <- renderUI(staticSampleIndicators)
+  # output$`2-staticsample` <- renderUI(staticSampleIndicators)
+  # output$`3-staticsample` <- renderUI(staticSampleIndicators)
+  # output$`4-staticsample` <- renderUI(staticSampleIndicators)
+  # output$`5-staticsample` <- renderUI(staticSampleIndicators)
+  # 
+  # output$`1-staticstudy` <- renderUI(staticStudyIndicators)
+  # 
+  # output$`1-staticparti` <- renderUI(staticParticipantIndicators)
+  
+  
+  
+  
+  # output$sampleIndicators2 <- renderUI({
+  #   createSampleFilterIndicators(session,
+  #                                heatmapSelection$appliedFilters,
+  #                                deletor = FALSE,
+  #                                idNumber = 2)
+  # })
+  # output$participantIndicators2 <- createFilterIndicators(session,
+  #                                                        participantFilters,
+  #                                                        options = c("gender", "race", "age"),
+  #                                                        class = "participant",
+  #                                                        deletor = FALSE,
+  #                                                        idNumber = 2)
+  # output$studyIndicators2 <- createFilterIndicators(session,
+  #                                                  studyFilters,
+  #                                                  options = c("study", "exposure_material", "study_type", "condition", "species"), 
+  #                                                  class = "study",
+  #                                                  deletor = FALSE,
+  #                                                  idNumber = 2)
+  # 
+  # output$sampleIndicators3 <- renderUI({
+  #   createSampleFilterIndicators(session,
+  #                                heatmapSelection$appliedFilters,
+  #                                deletor = FALSE,
+  #                                idNumber = 3)
+  # })
+  # output$participantIndicators3 <- createFilterIndicators(session,
+  #                                                         participantFilters,
+  #                                                         options = c("gender", "race", "age"),
+  #                                                         class = "participant",
+  #                                                         deletor = FALSE,
+  #                                                         idNumber = 3)
+  # output$studyIndicators3 <- createFilterIndicators(session,
+  #                                                   studyFilters,
+  #                                                   options = c("study", "exposure_material", "study_type", "condition", "species"), 
+  #                                                   class = "study",
+  #                                                   deletor = FALSE,
+  #                                                   idNumber = 3)
+  # output$sampleIndicators3 <- renderUI({
+  #   createSampleFilterIndicators(session,
+  #                                heatmapSelection$appliedFilters,
+  #                                deletor = FALSE,
+  #                                idNumber = 3)
+  # })
+  # output$participantIndicators3 <- createFilterIndicators(session,
+  #                                                         participantFilters,
+  #                                                         options = c("gender", "race", "age"),
+  #                                                         class = "participant",
+  #                                                         deletor = FALSE,
+  #                                                         idNumber = 3)
+  # output$studyIndicators3 <- createFilterIndicators(session,
+  #                                                   studyFilters,
+  #                                                   options = c("study", "exposure_material", "study_type", "condition", "species"), 
+  #                                                   class = "study",
+  #                                                   deletor = FALSE,
+  #                                                   idNumber = 3)
+  # 
   # Study Filter Tab -----
   
   ## Outputs ##
