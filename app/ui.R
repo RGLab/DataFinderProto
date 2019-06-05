@@ -23,7 +23,7 @@ fluidPage(
   ),
   
   # title ------------------------------
-  titlePanel("Data Finder (v2.6)"),
+  titlePanel("Data Finder (v3.0)"),
   
   # Main -------------------------------
   fluidPage(
